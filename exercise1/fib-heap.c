@@ -26,44 +26,29 @@ heap meld(heap h1, heap h2) {
 		h2 = tmp;
 	}
 
+    printf("Find out stuff %d %d\n", h1->key, h2->key);
+
 	h2->parent = h1;
 	if (h1->child == NULL) {
 		// h1 has no child, so h2 becomes only child
 		h1->child = h2;
+        h2->left_sibling = h2;
+        h2->right_sibling = h2;
 	} else {
-		// h1 has children, so we need to update pointers
-		node child = *(h1->child);
-		if (child.left_sibling == NULL) {
-			// h1 has only a single child
-			child.left_sibling = h2;
-			child.right_sibling = h2;
-			h2->left_sibling = &child;
-			h2->right_sibling = &child;
-		} else {
-			// h1 has multiple children, insert between child and its left sibling
-			node child2 = *(child.left_sibling);
+		// h1 has children, so we need to update pointers between them
+		node *child1 = h1->child;
+        node *child2 = child1->left_sibling;
 
-			h2->left_sibling = &child2;
-			h2->right_sibling = &child;
+        h2->left_sibling = child2;
+        h2->right_sibling = child1;
 
-			child.left_sibling = h2;
-			child2.right_sibling = h2;
-		}
+        child1->left_sibling = h2;
+        child2->right_sibling = h2;
 	}
+
 	return h1;
 }
 
-// heap make_heap() {
-// 	heap h = malloc(sizeof(node));
-// 	h->key = 0;
-// 	h->rank = 0;
-// 	h->marked = 0;
-// 	h->parent = NULL;
-// 	h->child = NULL;
-// 	h->left_sibling = NULL;
-// 	h->right_sibling = NULL;
-// 	return h;
-// }
 heap make_heap() {
 	return NULL;
 }
@@ -73,54 +58,51 @@ node find_min(heap h) {
 }
 
 void insert(int key, heap *h) {
-    node n;
-    n.key = key;
+    node *n = malloc(sizeof(node));
+    n->parent        = NULL;
+    n->left_sibling  = NULL;
+    n->right_sibling = NULL;
+    n->child         = NULL;
+    n->key           = key;
+    n->marked        = 0;
+    n->rank          = 0;
 
-	*h = meld(*h, &n);
+	*h = meld(*h, n);
 }
 
-void print_heap(heap h) {
-	static int offset = 0;
+void print_heap(heap h, int offset) {
+    // Print indentation
+	for (int i = 0; i < offset; i++) printf(" ");
 
-	for (int i = 0; i < offset; i++) {
-		printf(" ");
-	}
+    // Special case: empty heap
+	if (h == NULL) { printf("Empty heap\n"); return; }
 
-	if (h == NULL) {
-		printf("-\n");
-		return;
-	}
 
 	printf("%d\n", h->key);
 
-	offset += 2;
+	node* first_child = h->child;
+	if (first_child == NULL) return;
 
-	node* first = h->child;
-	if (first == NULL) return;
-
-	node* next = h->child;
+	node* next_child = h->child;
 	do {
-		print_heap(next);
-		printf("bob\n");
-		next = next->right_sibling;
-		printf("frank\n");
-	} while (next != first);
-
-	offset -= 2;
-}
-
-void add(int **ptr1, int *ptr2) {
-	int i = 2;
-	*ptr1 = &i;
+		print_heap(next_child, offset + 2);
+		next_child = next_child->right_sibling;
+	} while (next_child != first_child);
 }
 
 int main(void) {
+    printf("\n========== LE START OF PROGRAMZ ==========\n\n");
 	heap h = make_heap();
-	insert(8, &h);
-	// insert(6, &h);
-	// insert(5, h);
-	// insert(7, h);
-	print_heap(h);
+	insert(5, &h);
+	insert(9, &h);
+	insert(3, &h);
+	insert(1, &h);
+	insert(4, &h);
+	insert(7, &h);
+	insert(2, &h);
+	insert(6, &h);
+
+	print_heap(h, 0);
 
     return 0; 
 }
