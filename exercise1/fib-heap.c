@@ -60,14 +60,40 @@ node find_min(heap h) {
 void insert(int key, heap *h) {
     node *n = malloc(sizeof(node));
     n->parent        = NULL;
-    n->left_sibling  = NULL;
-    n->right_sibling = NULL;
     n->child         = NULL;
+    n->left_sibling  = n;
+    n->right_sibling = n;
     n->key           = key;
     n->marked        = 0;
     n->rank          = 0;
 
     *h = meld(*h, n);
+}
+
+void delete_min(heap *h) {
+    heap min = *h;
+
+    // Null child parents (rootify)
+    node *first = min->child;
+    node *child = min->child;
+    do {
+        child->parent = NULL;
+        child = child->right_sibling;
+    } while (child != first);
+
+    // Insert children into root chain (forrestify)
+    if (min->left_sibling != min) {
+        // Update root sibling pointers
+        min->left_sibling->right_sibling = min->child;
+        min->right_sibling->left_sibling = min->child->left_sibling;
+
+        // Update children pointers
+        min->child->right_sibling = min->left_sibling;
+        min->child->left_sibling->right_sibling = min->right_sibling;
+    }
+
+    // Linking step
+    // DO ME!
 }
 
 void print_heap(heap h, int offset) {
