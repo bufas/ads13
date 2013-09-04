@@ -3,7 +3,7 @@
 
 typedef struct node node;
 struct node {
-	node* parent;           // Parent node
+    node* parent;           // Parent node
     node* child;            // Any child node
     node* left_sibling;     // Left sibling
     node* right_sibling;    // Right sibling
@@ -14,29 +14,29 @@ struct node {
 typedef node* heap;
 
 heap meld(heap h1, heap h2) {
-	if (h1 == NULL) return h2;
-	if (h2 == NULL) return h1;
+    if (h1 == NULL) return h2;
+    if (h2 == NULL) return h1;
 
-	// For simplicity, we assume that h1 has the lowest priority key, and if
-	// this is not the case, we swap the pointers, so it becomes the case.
-	if (h2->key < h1->key) {
-		// swap h1 and h2
-		heap tmp = h1;
-		h1 = h2;
-		h2 = tmp;
-	}
+    // For simplicity, we assume that h1 has the lowest priority key, and if
+    // this is not the case, we swap the pointers, so it becomes the case.
+    if (h2->key < h1->key) {
+        // swap h1 and h2
+        heap tmp = h1;
+        h1 = h2;
+        h2 = tmp;
+    }
 
     printf("Find out stuff %d %d\n", h1->key, h2->key);
 
-	h2->parent = h1;
-	if (h1->child == NULL) {
-		// h1 has no child, so h2 becomes only child
-		h1->child = h2;
+    h2->parent = h1;
+    if (h1->child == NULL) {
+        // h1 has no child, so h2 becomes only child
+        h1->child = h2;
         h2->left_sibling = h2;
         h2->right_sibling = h2;
-	} else {
-		// h1 has children, so we need to update pointers between them
-		node *child1 = h1->child;
+    } else {
+        // h1 has children, so we need to update pointers between them
+        node *child1 = h1->child;
         node *child2 = child1->left_sibling;
 
         h2->left_sibling = child2;
@@ -44,17 +44,17 @@ heap meld(heap h1, heap h2) {
 
         child1->left_sibling = h2;
         child2->right_sibling = h2;
-	}
+    }
 
-	return h1;
+    return h1;
 }
 
 heap make_heap() {
-	return NULL;
+    return NULL;
 }
 
 node find_min(heap h) {
-	return *h;
+    return *h;
 }
 
 void insert(int key, heap *h) {
@@ -67,42 +67,42 @@ void insert(int key, heap *h) {
     n->marked        = 0;
     n->rank          = 0;
 
-	*h = meld(*h, n);
+    *h = meld(*h, n);
 }
 
 void print_heap(heap h, int offset) {
     // Print indentation
-	for (int i = 0; i < offset; i++) printf(" ");
+    for (int i = 0; i < offset; i++) printf(" ");
 
     // Special case: empty heap
-	if (h == NULL) { printf("Empty heap\n"); return; }
+    if (h == NULL) { printf("Empty heap\n"); return; }
 
 
-	printf("%d\n", h->key);
+    printf("%d\n", h->key);
 
-	node* first_child = h->child;
-	if (first_child == NULL) return;
+    node* first_child = h->child;
+    if (first_child == NULL) return;
 
-	node* next_child = h->child;
-	do {
-		print_heap(next_child, offset + 2);
-		next_child = next_child->right_sibling;
-	} while (next_child != first_child);
+    node* next_child = h->child;
+    do {
+        print_heap(next_child, offset + 2);
+        next_child = next_child->right_sibling;
+    } while (next_child != first_child);
 }
 
 int main(void) {
     printf("\n========== LE START OF PROGRAMZ ==========\n\n");
-	heap h = make_heap();
-	insert(5, &h);
-	insert(9, &h);
-	insert(3, &h);
-	insert(1, &h);
-	insert(4, &h);
-	insert(7, &h);
-	insert(2, &h);
-	insert(6, &h);
+    heap h = make_heap();
+    insert(5, &h);
+    insert(9, &h);
+    insert(3, &h);
+    insert(1, &h);
+    insert(4, &h);
+    insert(7, &h);
+    insert(2, &h);
+    insert(6, &h);
 
-	print_heap(h, 0);
+    print_heap(h, 0);
 
     return 0; 
 }
