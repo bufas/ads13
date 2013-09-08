@@ -29,7 +29,7 @@ heap meld(heap h1, heap h2) {
     printf("Find out stuff %d %d\n", h1->key, h2->key);
 
     h2->parent = h1;
-    h1->rank += 1;
+    h1->rank += 1; // TODO dont't know if this is correct
     if (h1->child == NULL) {
         // h1 has no child, so h2 becomes only child
         h1->child = h2;
@@ -94,6 +94,7 @@ void delete_min(heap *h) {
     }
 
     // Linking step
+    // Find two trees with equal rank
     // DO ME!
 }
 

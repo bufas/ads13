@@ -8,12 +8,18 @@ CFLAGS  = -g -Wall
 
 # the build target executable:
 TARGET = fib-heap
+TARGET2 = bin-heap
 
-all: $(TARGET)
+all: $(TARGET) $(TARGET2)
 
 $(TARGET): $(TARGET).c
 	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
 
+$(TARGET2): $(TARGET2).c
+	$(CC) $(CFLAGS) -o $(TARGET2) $(TARGET2).c
+
 clean:
 	$(RM) $(TARGET)
+	$(RM) $(TARGET2)
 	$(RM) -r $(TARGET).dSYM
+	$(RM) -r $(TARGET2).dSYM
