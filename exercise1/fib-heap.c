@@ -29,6 +29,7 @@ heap meld(heap h1, heap h2) {
     printf("Find out stuff %d %d\n", h1->key, h2->key);
 
     h2->parent = h1;
+    h1->rank += 1;
     if (h1->child == NULL) {
         // h1 has no child, so h2 becomes only child
         h1->child = h2;
