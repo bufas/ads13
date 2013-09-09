@@ -6,7 +6,8 @@ typedef struct node node;
 heap *make_heap();
 node find_min(heap *h);
 void insert(int key, heap *h);
-void bubbleUp(heap *h, node *n);
+void delete_min(heap *h);
+void bubble_up(heap *h, node *n);
 void print(heap *h);
 void print_aux(node *n, int indent);
 
@@ -79,12 +80,12 @@ void insert(int key, heap *h) {
         }
     }
 
-    bubbleUp(h, n);
+    bubble_up(h, n);
 
     h->size += 1;
 }
 
-void bubbleUp(heap *h, node *n) {
+void bubble_up(heap *h, node *n) {
     while (n->parent != NULL && n->parent->key > n->key) {
         // Set variables
         node *parent = n->parent;
