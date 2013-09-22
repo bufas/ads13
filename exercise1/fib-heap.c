@@ -1,17 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct node node;
-struct node {
-    node* parent;           // Parent node
-    node* child;            // Any child node
-    node* left_sibling;     // Left sibling
-    node* right_sibling;    // Right sibling
-    int key;                // Priority
-    int rank;               // Rank >= 0
-    int marked;             // Unmarked = 0, marked = 1
-};
-typedef node* heap;
+#include "fib-heap.h"
 
 heap meld(heap h1, heap h2) {
     if (h1 == NULL) return h2;
