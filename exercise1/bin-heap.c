@@ -1,29 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "bin-heap.h"
 
-typedef struct heap heap;
-typedef struct node node;
-heap *make_heap();
-node find_min(heap *h);
-void insert(int key, heap *h);
-void delete_min(heap *h);
-void decrease_key(heap *h, node *n, int delta);
 void rotate_up(node *n);
 void sift_down(node *n);
 void bubble_up(heap *h, node *n);
 void print(heap *h);
 void print_aux(node *n, int indent);
-
-struct heap {
-    node *root;
-    int size;
-};
-struct node {
-    node *parent;           // Parent node
-    node *left_child;       // Left child
-    node *right_child;      // Right child
-    int key;                // Priority
-};
 
 heap *make_heap() {
     heap *h = malloc(sizeof(heap));
