@@ -150,14 +150,15 @@ node *delete_min(heap *h) {
     return min;
 }
 
-// TODO wrong! only prints the first tree!!
-void print_heap(heap h, int offset) {
+void print_tree(heap h, int offset) {
     // Print indentation
     for (int i = 0; i < offset; i++) printf(" ");
 
     // Special case: empty heap
-    if (h == NULL) { printf("Empty heap\n"); return; }
-
+    if (h == NULL) { 
+        printf("Empty heap\n"); 
+        return; 
+    }
 
     printf("%d\n", h->key);
 
@@ -166,10 +167,23 @@ void print_heap(heap h, int offset) {
 
     node* next_child = h->child;
     do {
-        print_heap(next_child, offset + 2);
+        print_tree(next_child, offset + 2);
         next_child = next_child->right_sibling;
     } while (next_child != first_child);
 }
+
+void print_heap(heap h) {
+    heap first = h;
+    heap current = h;
+    int tree_count = 0;
+    do {
+        printf("Tree %d:\n", tree_count++);
+        print_tree(current, 0);
+        current = current->right_sibling;
+    } while (first != current);
+    printf("\n");
+}
+
 
 int main(void) {
     printf("\n========== LE START OF PROGRAMZ ==========\n\n");
@@ -179,14 +193,14 @@ int main(void) {
     insert(3, &h);
     insert(1, &h);
     insert(4, &h);
-    insert(7, &h);
-    insert(2, &h);
-    insert(6, &h);
+//    insert(7, &h);
+//    insert(2, &h);
+//    insert(6, &h);
 
-    print_heap(h, 0);
+    print_heap(h);
 
     delete_min(&h);
-    //print_heap(h, 0);
+    print_heap(h);
 
     return 0; 
 }
