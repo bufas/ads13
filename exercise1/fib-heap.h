@@ -1,3 +1,6 @@
+#ifndef FIB_HEAP_H
+#define FIB_HEAP_H
+
 typedef struct node node;
 typedef struct heap heap;
 
@@ -51,3 +54,4 @@ node *delete_min(heap *h);
  */
 void decrease_key(heap *h, node *n, int delta);
 
+#endif
