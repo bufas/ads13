@@ -131,10 +131,12 @@ node *delete_min(heap *h) {
     heap start = anchor;
     heap current = anchor;
     int first = 1;
+    // TODO clean this up
     while(current != start || first) {
         int cur_rank = current->rank;
         if (seen_ranks[cur_rank] != NULL) {
             // link these two and set new starting point
+            // TODO rewrite! If this is not there, it will try to link heaps with themselves
             if (current == seen_ranks[cur_rank]) {
                 current = current->right_sibling;
                 continue;
