@@ -44,5 +44,5 @@ node *delete_min(heap *h);
  * @param n the node whos key should be decreased
  * @param delta the amount to decrease the key
  */
-void decrease_key(heap h, node *n, int delta);
+void decrease_key(heap *h, node *n, int delta);
 
