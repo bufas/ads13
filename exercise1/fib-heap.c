@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "fib-heap.h"
 
-heap meld(heap h1, heap h2) {
+heap link(heap h1, heap h2) {
     if (h1 == NULL) return h2;
     if (h2 == NULL) return h1;
 
@@ -15,10 +15,12 @@ heap meld(heap h1, heap h2) {
         h2 = tmp;
     }
 
-    printf("Find out stuff %d %d\n", h1->key, h2->key);
+    // Update the pointers between tree roots
+    h2->right_sibling->left_sibling = h2->left_sibling;
+    h2->left_sibling->right_sibling = h2->right_sibling;
 
     h2->parent = h1;
-    h1->rank += 1; // TODO dont't know if this is correct
+    h1->rank += 1;
     if (h1->child == NULL) {
         // h1 has no child, so h2 becomes only child
         h1->child = h2;
@@ -37,6 +39,19 @@ heap meld(heap h1, heap h2) {
     }
 
     return h1;
+}
+
+heap meld(heap h1, heap h2) {
+    if (h1 == NULL) return h2;
+    if (h2 == NULL) return h1;
+
+    h1->right_sibling->left_sibling = h2->left_sibling;
+    h2->left_sibling->right_sibling = h1->right_sibling;
+
+    h1->right_sibling = h2;
+    h2->left_sibling = h1;
+
+    return h1->key < h2->key ? h1 : h2;
 }
 
 heap make_heap() {
@@ -60,33 +75,82 @@ void insert(int key, heap *h) {
     *h = meld(*h, n);
 }
 
-void delete_min(heap *h) {
+// TODO does not work yet
+node *delete_min(heap *h) {
     heap min = *h;
 
-    // Null child parents (rootify)
-    node *first = min->child;
-    node *child = min->child;
-    do {
-        child->parent = NULL;
-        child = child->right_sibling;
-    } while (child != first);
+    if (min->child != NULL) {
+        // Null child parents (rootify)
+        node *first = min->child;
+        node *child = min->child;
+        do {
+            child->parent = NULL;
+            child = child->right_sibling;
+        } while (child != first);
 
-    // Insert children into root chain (forrestify)
-    if (min->left_sibling != min) {
-        // Update root sibling pointers
-        min->left_sibling->right_sibling = min->child;
-        min->right_sibling->left_sibling = min->child->left_sibling;
+        // Insert children into root chain (forrestify)
+        if (min->left_sibling != min) {
+            // Update root sibling pointers
+            min->left_sibling->right_sibling = min->child;
+            min->right_sibling->left_sibling = min->child->left_sibling;
 
-        // Update children pointers
-        min->child->right_sibling = min->left_sibling;
-        min->child->left_sibling->right_sibling = min->right_sibling;
+            // Update children pointers
+            min->child->right_sibling = min->left_sibling;
+            min->child->left_sibling->right_sibling = min->right_sibling;
+        }
+    } else {
+        // If there are no children we have to update the sibling pointers
+        min->right_sibling->left_sibling = min->left_sibling;
+        min->left_sibling->right_sibling = min->right_sibling;
     }
 
     // Linking step
-    // Find two trees with equal rank
-    // DO ME!
+    heap anchor = min->right_sibling;
+    // Run through all roots to get the biggest rank
+    int max_rank = anchor->rank;
+    int no_of_trees = 0;
+    heap i = anchor->right_sibling;
+    while (i != anchor) {
+        max_rank = i->rank > max_rank ? i->rank : max_rank;
+        i = i->right_sibling;
+        no_of_trees++;
+    }
+    // Create an array with max_rank entries and initialize to NULL
+    int array_size = max_rank + no_of_trees + 1;
+    heap seen_ranks[array_size];
+    for (int i = 0; i < array_size; i++) seen_ranks[i] = NULL;
+    // Run through all roots and link equal ranked trees
+    heap current = anchor;
+    heap end = anchor->left_sibling;
+    while(current != end) { // TODO this might produce an off by one error
+        int cur_rank = current->rank;
+        if (seen_ranks[cur_rank] != NULL) {
+            // meld these two and set new starting point
+            current = link(current, seen_ranks[cur_rank]);
+            end = current->left_sibling;
+            seen_ranks[cur_rank] = NULL;
+        } else {
+            // put this heap into the array and move right
+            seen_ranks[cur_rank] = current;
+            current = current->right_sibling;
+        }
+        anchor = current; // This is just to keep a reference to a root node
+    }
+
+    // Set h to the new minimum
+    heap new_min = anchor;
+    i = anchor->right_sibling;
+    while (i != anchor) {
+        new_min = i->rank < new_min->rank ? i : new_min;
+        i = i->right_sibling;
+    }
+    printf("new min is %d\n", new_min->rank);
+    *h = new_min;
+
+    return min;
 }
 
+// TODO wrong! only prints the first tree!!
 void print_heap(heap h, int offset) {
     // Print indentation
     for (int i = 0; i < offset; i++) printf(" ");
@@ -120,6 +184,9 @@ int main(void) {
     insert(6, &h);
 
     print_heap(h, 0);
+
+    delete_min(&h);
+    //print_heap(h, 0);
 
     return 0; 
 }
