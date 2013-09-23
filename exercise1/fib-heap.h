@@ -1,5 +1,10 @@
 typedef struct node node;
-typedef node *heap;
+typedef struct heap heap;
+
+struct heap {
+    node *root;             // Min element of the heap
+    int size;               // Size of the heap
+};
 
 struct node {
     node* parent;           // Parent node
@@ -15,14 +20,14 @@ struct node {
  * Returns a null pointer as that is what an empty heap is
  * @return a new empty heap (null pointer)
  */
-heap make_heap();
+heap *make_heap();
 
 /**
  * Returns the minimum element of the heap
  * h a pointer to the heap
  * @return the minimum node of the heap h
  */
-node find_min(heap h);
+node find_min(heap *h);
 
 /**
  * Inserts an element with a specified key into
