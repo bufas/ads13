@@ -1,3 +1,6 @@
+#ifndef BIN_HEAP_H
+#define BIN_HEAP_H
+
 typedef struct heap heap;
 typedef struct node node;
 
@@ -47,3 +50,5 @@ void delete_min(heap *h);
  * @param delta the amount to decrease the key
  */
 void decrease_key(heap *h, node *n, int delta);
+
+#endif
