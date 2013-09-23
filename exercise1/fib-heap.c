@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include "fib-heap.h"
 
+void print_heap(heap h);
+
 heap link(heap h1, heap h2) {
     if (h1 == NULL) return h2;
     if (h2 == NULL) return h1;
+
+    printf("Linking %d and %d\n", h1->key, h2->key);
 
     // For simplicity, we assume that h1 has the lowest priority key, and if
     // this is not the case, we swap the pointers, so it becomes the case.
@@ -18,6 +22,8 @@ heap link(heap h1, heap h2) {
     // Update the pointers between tree roots
     h2->right_sibling->left_sibling = h2->left_sibling;
     h2->left_sibling->right_sibling = h2->right_sibling;
+
+    print_heap(h1);
 
     h2->parent = h1;
     h1->rank += 1;
@@ -37,6 +43,8 @@ heap link(heap h1, heap h2) {
         child1->left_sibling = h2;
         child2->right_sibling = h2;
     }
+
+    //print_heap(h1);
 
     return h1;
 }
@@ -120,19 +128,26 @@ node *delete_min(heap *h) {
     heap seen_ranks[array_size];
     for (int i = 0; i < array_size; i++) seen_ranks[i] = NULL;
     // Run through all roots and link equal ranked trees
+    heap start = anchor;
     heap current = anchor;
-    heap end = anchor->left_sibling;
-    while(current != end) { // TODO this might produce an off by one error
+    int first = 1;
+    while(current != start || first) {
         int cur_rank = current->rank;
         if (seen_ranks[cur_rank] != NULL) {
-            // meld these two and set new starting point
+            // link these two and set new starting point
+            if (current == seen_ranks[cur_rank]) {
+                current = current->right_sibling;
+                continue;
+            }
             current = link(current, seen_ranks[cur_rank]);
-            end = current->left_sibling;
             seen_ranks[cur_rank] = NULL;
+            start = current;
+            first = 1;
         } else {
             // put this heap into the array and move right
             seen_ranks[cur_rank] = current;
             current = current->right_sibling;
+            first = 0;
         }
         anchor = current; // This is just to keep a reference to a root node
     }
@@ -141,10 +156,10 @@ node *delete_min(heap *h) {
     heap new_min = anchor;
     i = anchor->right_sibling;
     while (i != anchor) {
+        printf("new_min->key = %d, i->key = %d\n", new_min->key, i->key);
         new_min = i->rank < new_min->rank ? i : new_min;
         i = i->right_sibling;
     }
-    printf("new min is %d\n", new_min->rank);
     *h = new_min;
 
     return min;
@@ -193,9 +208,9 @@ int main(void) {
     insert(3, &h);
     insert(1, &h);
     insert(4, &h);
-//    insert(7, &h);
-//    insert(2, &h);
-//    insert(6, &h);
+    insert(7, &h);
+    insert(2, &h);
+    insert(6, &h);
 
     print_heap(h);
 
