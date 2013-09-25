@@ -7,25 +7,17 @@ CC = clang
 CFLAGS  = -g -Wall
 
 # the build target executable:
-TARGET = fib-heap
+TARGET1 = fib-heap
 TARGET2 = bin-heap
-TARGET3 = bin-heap-improved
+TARGET3 = fib-test
 
-all: $(TARGET) $(TARGET2) $(TARGET3)
+all: $(TARGET3)
 
-$(TARGET): $(TARGET).c
-	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
-
-$(TARGET2): $(TARGET2).c
-	$(CC) $(CFLAGS) -o $(TARGET2) $(TARGET2).c
-
-$(TARGET3): $(TARGET3).c
-	$(CC) $(CFLAGS) -o $(TARGET3) $(TARGET3).c
+$(TARGET3): $(TARGET3).o $(TARGET1).o
+	$(CC) $(CFLAGS) -o $(TARGET3) $(TARGET3).o $(TARGET1).o
 
 clean:
-	$(RM) $(TARGET)
-	$(RM) $(TARGET2)
-	$(RM) $(TARGET3)
-	$(RM) -r $(TARGET).dSYM
-	$(RM) -r $(TARGET2).dSYM
-	$(RM) -r $(TARGET3).dSYM
+	$(RM) *.o
+	$(RM) *.dot
+	$(RM) -r *.dSYM
+	$(RM) $(TARGET1) $(TARGET2) $(TARGET3)
