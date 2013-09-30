@@ -17,6 +17,7 @@ struct node {
     int key;                // Priority
     int rank;               // Rank >= 0
     int marked;             // Unmarked = 0, marked = 1
+    void *data;             // The data contained by the node
 };
 
 heap* make_heap();

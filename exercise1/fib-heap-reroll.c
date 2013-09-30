@@ -316,6 +316,7 @@ node* insert(heap *h, int key) {
     n->key = key;
     n->rank = 0;
     n->marked = 0;
+    n->data = NULL;
 
     // Meld it with the root of the heap, if it is non-null
     if (h->root != NULL) {
