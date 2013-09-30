@@ -50,6 +50,45 @@ void dijkstra(int source, graphnode **nodes, int **edges, int graphsize) {
     free(heap_nodes);
 }
 
+/**
+ * Build an adjacency matrix as a two-dimensional int array from
+ * the given size and distances array.
+ */
+int** build_matrix(int size, int *distances) {
+    int **matrix = (int**) malloc(size * sizeof(int*));
+    for (int i = 0; i < size; i++) {
+        matrix[i] = (int*) malloc(size * sizeof(int));
+
+        for (int j = 0; j < size; j++) {
+            // Flattened index
+            int index = (i * size) + j;
+            matrix[i][j] = distances[index];
+        }
+    }
+    return matrix;
+}
+
+/**
+ * Build a distances array from an argument array by converting
+ * the argument strings to integers. Note that the args pointer
+ * must point to what will become the top-left (0,0) entry in
+ * what will be the resulting adjacency matrix.
+ *
+ * @param length the length of the argument array
+ * @param args the 0-indexed argument array
+ */
+int* args_to_distances(int length, char **args) {
+    int *distances = (int*) malloc(length * sizeof(int));
+    for (int i = 0; i < n; i++) {
+        if (strlen(args[i]) == 1 && args[i][0] == '-') {
+            distances[i] = INFINITY;
+        } else {
+            distances[i] = atoi(args[i]);
+        }
+    }
+    return distances;
+}
+
 int main() {
     // The number of nodes
     int testsize = 4;
