@@ -8,7 +8,7 @@ void bubble_up(heap *h, node *n);
 void print(heap *h);
 void print_aux(node *n, int indent);
 
-heap *make_heap() {
+heap* make_heap() {
     heap *h = malloc(sizeof(heap));
     h->root = NULL;
     h->size = 0;
@@ -19,11 +19,12 @@ node find_min(heap *h) {
     return *(h->root);
 }
 
-void insert(int key, heap *h) {
+node* insert(heap *h, int key) {
     node *n = malloc(sizeof(node));
     n->left_child = NULL;
     n->right_child = NULL;
     n->key = key;
+    n->data = NULL;
 
     if (h->root == NULL) {
         // This is the first element
@@ -69,6 +70,7 @@ void insert(int key, heap *h) {
     bubble_up(h, n);
 
     h->size += 1;
+    return n;
 }
 
 void decrease_key(heap *h, node *n, int delta) {
@@ -87,7 +89,7 @@ void bubble_up(heap *h, node *n) {
     }
 }
 
-void delete_min(heap *h) {
+node* delete_min(heap *h) {
     // Keep a pointer to the min element
     node *root = h->root;
 
@@ -132,7 +134,8 @@ void delete_min(heap *h) {
     h->root = new_root;
 
     // Free Willy Wonka
-    free(root);
+    //free(root);
+    return root;
 }
 
 void rotate_up(node *n) {
@@ -221,20 +224,4 @@ void print_aux(node *n, int indent) {
 
 void print(heap *h) {
     print_aux(h->root, 0);
-}
-
-int main() {
-    heap *h = make_heap();
-    for (int i = 10; i > 0; i--) {
-        insert(i, h);
-    }
-
-    for (int i = 11; i <= 15; i++) {
-        insert(i, h);
-    }
-
-    decrease_key(h, h->root->left_child->right_child, 3);
-    delete_min(h);
-
-    print(h);
 }

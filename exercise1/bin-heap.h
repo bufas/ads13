@@ -14,13 +14,14 @@ struct node {
     node *left_child;   // Left child
     node *right_child;  // Right child
     int key;            // Priority
+    void *data;         // The data contained by the node
 };
 
 /**
  * Creates a new empty heap
  * @return a pointer to the new heap
  */
-heap *make_heap();
+heap* make_heap();
 
 /**
  * Returns the minimum element of the heap
@@ -35,13 +36,13 @@ node find_min(heap *h);
  * @param key the key the element new element should have
  * @param h the heap on which to carry out the action
  */
-void insert(int key, heap *h);
+node* insert(heap *h, int key);
 
 /**
  * Deletes the minimum element from a given heap
  * @param h the heap on which to carry out the action
  */
-void delete_min(heap *h);
+node* delete_min(heap *h);
 
 /**
  * Decreases the key by the amount delta of node n

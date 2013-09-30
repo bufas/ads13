@@ -3,7 +3,8 @@
 #include <time.h>
 #include <string.h>
 #include <limits.h>
-#include "fib-heap-reroll.h"
+//#include "fib-heap-reroll.h"
+#include "bin-heap.h"
 
 #define INFINITY INT_MAX
 
@@ -196,28 +197,14 @@ int* args_to_distances(int length, char **args) {
 
 int main() {
     // The number of nodes
-    int testsize = 4;
+    int testsize = 100;
     srand(time(0));
 
-    // Initialize the ajacency matrix
-    int **edges = malloc(testsize * sizeof(int *));
-    for (int nodes = 0; nodes < testsize; nodes++) {
-        int *tmp = malloc(testsize * sizeof(int));
-        for (int i = 0; i < testsize; i++) {
-            tmp[i] = 0;
-        }
-        edges[nodes] = tmp;
-    }
+    //int distances[] = {0,4,INFINITY,2,4,0,1,8,INFINITY,1,0,INFINITY,2,8,INFINITY,0};
+    //edges = build_matrix(4, distances);
+    int **edges = build_random_matrix(testsize);
+    make_dot(edges, testsize, "dotdot.dot");
 
-    // Fill the ajacency matrix
-    for (int row = 0; row < testsize; row++) {
-        for (int col = 0; col < row; col++) {
-            int dist = rand() % 10;
-            if (dist == 0) dist = INFINITY;
-            edges[row][col] = dist;
-            edges[col][row] = dist;
-        }
-    }
 
     // Create the nodes
     graphnode **nodes = malloc(testsize * sizeof(graphnode *));
