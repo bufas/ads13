@@ -93,6 +93,7 @@ int* args_to_distances(int length, char **args) {
 int main() {
     // The number of nodes
     int testsize = 4;
+    srand(time(0));
 
     // Initialize the ajacency matrix
     int **edges = malloc(testsize * sizeof(int *));
@@ -108,6 +109,7 @@ int main() {
     for (int row = 0; row < testsize; row++) {
         for (int col = 0; col < row; col++) {
             int dist = rand() % 10;
+            if (dist == 0) dist = INFINITY;
             edges[row][col] = dist;
             edges[col][row] = dist;
         }
@@ -136,7 +138,11 @@ int main() {
     for (int row = 0; row < testsize; row++) {
         printf("%d | ", row);
         for (int col = 0; col < testsize; col++) {
-            printf("%d ", edges[row][col]);
+            if (edges[row][col] == INFINITY) {
+                printf("- ");
+            } else {
+                printf("%d ", edges[row][col]);
+            }
         }
         printf("\n");
     }
