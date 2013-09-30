@@ -139,6 +139,19 @@ int** build_random_matrix(int n) {
         shift_back(unvisited, m, index);
         m--;
     }
+
+    // Add some random shortcuts
+    for (int k = 0; k < n; k++) {
+        int i = rand() % n;
+        int j = rand() % n;
+        if (i != j) {
+            int dist = 1 + (rand() % 9);
+            matrix[i][j] = dist;
+            matrix[j][i] = dist;
+        } else {
+            k--;
+        }
+    }
     return matrix;
 }
 
