@@ -1,57 +1,58 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
-#include "fib-heap.h"
+#include <limits.h>
+#include "fib-heap-reroll.h"
 
-#define INFINITY -1
+#define INFINITY INT_MAX
 
-typedef struct graphnode;
+typedef struct graphnode graphnode;
 struct graphnode {
+    int index;
     int tentative_dist;
     int visited;
 };
 
-void dijkstra(int source, graphnode **nodes, int **edges, int testsize) {
-    // 1. Assign all nodes a distance (zero for source, and INF for all other)
+void dijkstra(int source, graphnode **nodes, int **edges, int graphsize) {
     nodes[source]->tentative_dist = 0;
-    // 2. Mark all nodes as unvisited
-    // 3. Set source as current
-    int current = source;
-    // 4. Create a set of all unvisited nodes
+
     heap *unvisited = make_heap();
-    node **heap_nodes = malloc(testsize * sizeof(node *));
-    for (int i = 0; i < testsize; i++) {
+    node **heap_nodes = malloc(graphsize * sizeof(node *));
+    for (int i = 0; i < graphsize; i++) {
         node *n = insert(unvisited, nodes[i]->tentative_dist);
+        n->data = nodes[i];
         heap_nodes[i] = n;
     }
 
-    current = delete_min(unvisited);
-    while (nodes[current]->tentative_dist != INFINITY) {
-        // 5. For all unvisited neighbors of current, update their tentative distance
-        for (int neighbor = 0; neighbor < testsize; neighbor++) {
-            if (edges[current][neighbor] != 0) {
+    do {
+        node *current = delete_min(unvisited);
+        graphnode *this_node = (graphnode *) current->data;
+        for (int neighbor = 0; neighbor < graphsize; neighbor++) {
+            graphnode *neighbor_node = (graphnode *) heap_nodes[neighbor]->data;
+            int this_edge = edges[this_node->index][neighbor];
+            if (this_edge != 0) {
                 // There is an edge to this neighbor
-                int dist_from_current = nodes[current]->tentative_dist + edges[current][neighbor];
-                if (nodes[neighbor]->tentative_dist > dist_from_current) {
+                int dist_from_current = current->key + this_edge;
+                if (heap_nodes[neighbor]->key > dist_from_current) {
                     // update the neighbor dist
-                    nodes[neighbor]->tentative_dist = dist_from_current;
-                    int delta_dist = nodes[neighbor]->tentative_dist - dist_from_current;
+                    int delta_dist = heap_nodes[neighbor]->key - dist_from_current;
+                    neighbor_node->tentative_dist = dist_from_current;
                     decrease_key(unvisited, heap_nodes[neighbor], delta_dist);
                 }
             }
         }
 
-        // 6. Mark current as visited
-        nodes[current]->cisited = 1;
+        this_node->visited = 1;
 
-        if (unvisited->size == 0) return;
+    } while (unvisited->size > 1 && find_min(unvisited).key != INFINITY);
 
-        current = delete_min(unvisited);
-    }
+    // Free memory
+    free(heap_nodes);
 }
 
 int main() {
     // The number of nodes
-    int testsize = 10;
+    int testsize = 4;
 
     // Initialize the ajacency matrix
     int **edges = malloc(testsize * sizeof(int *));
@@ -66,8 +67,7 @@ int main() {
     // Fill the ajacency matrix
     for (int row = 0; row < testsize; row++) {
         for (int col = 0; col < row; col++) {
-            // Do stuff
-            int dist = rand() % 10 > 0 ? 0 : rand() % 10 + 1;
+            int dist = rand() % 10;
             edges[row][col] = dist;
             edges[col][row] = dist;
         }
@@ -79,13 +79,35 @@ int main() {
         graphnode *node = malloc(sizeof(graphnode));
         node->tentative_dist = INFINITY;
         node->visited = 0;
+        node->index = i;
+        nodes[i] = node;
     }
 
     // Elect source
-    node *source = nodes[rand() % testsize];
+    int source = rand() % testsize;
+
+    // Print the configuration
+    printf("Source node: %d\n", source);
+    printf("    ");
+    for (int col = 0; col < testsize; col++) printf("%d ", col);
+    printf("\n   ");
+    for (int col = 0; col < testsize; col++) printf("--");
+    printf("\n");
+    for (int row = 0; row < testsize; row++) {
+        printf("%d | ", row);
+        for (int col = 0; col < testsize; col++) {
+            printf("%d ", edges[row][col]);
+        }
+        printf("\n");
+    }
 
     // Call Dijkstras algorithm
-    dijkstra(source, nodes, edges);
+    dijkstra(source, nodes, edges, testsize);
+
+    // Print the result
+    for (int i = 0; i < testsize; i++) {
+        printf("Node %d: %d meter\n", i, nodes[i]->tentative_dist);
+    }
 
     // Free memory
     for (int i = 0; i < testsize; i++) {
