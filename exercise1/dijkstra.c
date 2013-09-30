@@ -25,9 +25,14 @@ void dijkstra(int source, graphnode **nodes, int **edges, int graphsize) {
         heap_nodes[i] = n;
     }
 
-    do {
+    while (unvisited->size > 0) {
         node *current = delete_min(unvisited);
         graphnode *this_node = (graphnode *) current->data;
+
+        if (this_node->tentative_dist == INFINITY) {
+            break;
+        }
+
         for (int neighbor = 0; neighbor < graphsize; neighbor++) {
             graphnode *neighbor_node = (graphnode *) heap_nodes[neighbor]->data;
             int this_edge = edges[this_node->index][neighbor];
@@ -42,13 +47,99 @@ void dijkstra(int source, graphnode **nodes, int **edges, int graphsize) {
                 }
             }
         }
-
         this_node->visited = 1;
-
-    } while (unvisited->size > 1 && find_min(unvisited).key != INFINITY);
+    }
 
     // Free memory
     free(heap_nodes);
+}
+
+void make_dot(int **matrix, int n, char *filename) {
+    FILE *f = fopen(filename, "w");
+    if (f == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    fprintf(f, "graph graphternoondelight {\n");
+    for (int i = 0; i < n; i++) {
+        fprintf(f, "\t\"%d\"\n", i);
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (i != j && matrix[i][j] < INFINITY) {
+                fprintf(f, "\t\"%d\" -- \"%d\" [label=\"%d\"]\n", i, j, matrix[i][j]);
+            }
+        }
+    }
+    fprintf(f, "}\n");
+    fclose(f);
+}
+
+/**
+ * Shift entries of an array back by one, effectively overwriting
+ * the given index. This is a super easy way of "extracting" values
+ * without having to allocate new arrays.
+ */
+void shift_back(int *src, int length, int index) {
+    for (int i = index; i < length - 1; i++) {
+        src[i] = src[i+1];
+    }
+}
+
+/**
+ * Build a random adjacency matrix by doing a random walk through
+ * all the nodes of the assumed graph, generating random distances
+ * on every visit. By never generating INFINITY, the random walk
+ * will produce a fully connected graph without shortcuts.
+ */
+int** build_random_matrix(int n) {
+    // Allocate the memory for the adjacency matrix
+    int** matrix = (int**) malloc(n * sizeof(int*));
+
+    // Initialize all distances to INFINITY
+    for (int i = 0; i < n; i++) {
+        matrix[i] = (int*) malloc(n * sizeof(int));
+
+        for (int j = 0; j < i; j++) {
+            matrix[i][j] = INFINITY;
+            matrix[j][i] = INFINITY;
+        }
+    }
+
+    // Except for the diagonal, which is all zeroes
+    for (int i = 0; i < n; i++) {
+        matrix[i][i] = 0;
+    }
+
+    // Generate an array of unvisited nodes
+    int *unvisited = (int*) malloc(n * sizeof(int));
+    for (int i = 0; i < n; i++) {
+        unvisited[i] = i;
+    }
+
+    // Do a random walk.
+    int prev = 0;
+    int m = n;
+    for (int k = 0; k < n; k++) {
+        // Pick a new node at random
+        int index = rand() % m;
+        int curr = unvisited[index];
+
+        // Generate a random distance from previous node
+        int dist = 1 + (rand() % 9);
+        matrix[prev][curr] = (dist == 0) ? INFINITY : dist;
+        matrix[curr][prev] = (dist == 0) ? INFINITY : dist;
+
+        // Remember the current node
+        prev = curr;
+
+        // Shift the array backwards
+        shift_back(unvisited, m, index);
+        m--;
+    }
+    return matrix;
 }
 
 /**
