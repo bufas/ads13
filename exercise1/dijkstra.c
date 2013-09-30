@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 #include <limits.h>
 #include "fib-heap-reroll.h"
 
@@ -79,7 +80,7 @@ int** build_matrix(int size, int *distances) {
  */
 int* args_to_distances(int length, char **args) {
     int *distances = (int*) malloc(length * sizeof(int));
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < length; i++) {
         if (strlen(args[i]) == 1 && args[i][0] == '-') {
             distances[i] = INFINITY;
         } else {
