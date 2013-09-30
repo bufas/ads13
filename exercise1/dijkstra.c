@@ -31,7 +31,7 @@ void dijkstra(int source, graphnode **nodes, int **edges, int graphsize) {
         for (int neighbor = 0; neighbor < graphsize; neighbor++) {
             graphnode *neighbor_node = (graphnode *) heap_nodes[neighbor]->data;
             int this_edge = edges[this_node->index][neighbor];
-            if (this_edge != 0) {
+            if (this_edge < INFINITY) {
                 // There is an edge to this neighbor
                 int dist_from_current = current->key + this_edge;
                 if (heap_nodes[neighbor]->key > dist_from_current) {
