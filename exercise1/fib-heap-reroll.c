@@ -693,18 +693,18 @@ void decrease_key_stress_test() {
     free(h);
 }
 
-int main() {
-    p("Running tests...");
-    // insert_in_empty_heap();
-    // insert_in_non_empty_heap();
-    // delete_min_in_single_node_heap_p1();
-    // delete_min_in_multi_node_heap_p1();
-    // delete_min_in_multi_node_heap_p2();
-    // delete_min_in_multi_node_heap_p3();
-    // delete_min_stress_test();
-    // decrease_key_single_node_heap();
-    // decrease_key_multi_node_heap();
-    decrease_key_stress_test();
-    p("All tests OK!");
-    return 0;
-}
+//int main() {
+//    p("Running tests...");
+//    // insert_in_empty_heap();
+//    // insert_in_non_empty_heap();
+//    // delete_min_in_single_node_heap_p1();
+//    // delete_min_in_multi_node_heap_p1();
+//    // delete_min_in_multi_node_heap_p2();
+//    // delete_min_in_multi_node_heap_p3();
+//    // delete_min_stress_test();
+//    // decrease_key_single_node_heap();
+//    // decrease_key_multi_node_heap();
+//    decrease_key_stress_test();
+//    p("All tests OK!");
+//    return 0;
+//}
