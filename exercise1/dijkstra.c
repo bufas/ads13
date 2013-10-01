@@ -3,8 +3,11 @@
 #include <time.h>
 #include <string.h>
 #include <limits.h>
-//#include "fib-heap-reroll.h"
-#include "bin-heap.h"
+#ifdef FIB
+    #include "fib-heap.h"
+#else
+    #include "bin-heap.h"
+#endif
 
 #define INFINITY INT_MAX
 
