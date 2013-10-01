@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
-#include "fib-heap-reroll.h"
+#include "fib-heap.h"
 #include "fib-dot.h"
 
 #define DEBUG 0
