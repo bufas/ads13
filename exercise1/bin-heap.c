@@ -74,7 +74,6 @@ node* insert(heap *h, int key) {
 }
 
 void decrease_key(heap *h, node *n, int delta) {
-    printf("decrease key %d to %d\n", n->key, n->key - delta);
     n->key -= delta;
     bubble_up(h, n);
 }
@@ -119,7 +118,6 @@ node* delete_min(heap *h) {
 
         if (!seenOne && bitN) seenOne = 1;
     }
-    printf("Last child is %d and bitN is %d\n", last->key, bitN);
 
     // Update the last nodes parents child pointer to NULL
     if (bitN) last->parent->right_child = NULL;             // 1
