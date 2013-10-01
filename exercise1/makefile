@@ -1,23 +1,28 @@
-# the compiler: gcc for C program, define as g++ for C++
-CC = clang
+CC=clang
+CFLAGS=-g -Wall
 
-# compiler flags:
-#  -g    adds debugging information to the executable file
-#  -Wall turns on most, but not all, compiler warnings
-CFLAGS  = -g -Wall
+DIJ-BIN=dijkstra-bin
+DIJ-FIB=dijkstra-fib
 
-# the build target executable:
-TARGET1 = fib-heap
-TARGET2 = bin-heap
-TARGET3 = fib-test
+TEST-BIN=bin-test
+TEST-FIB=fib-test
 
-all: $(TARGET3)
+all: $(DIJ-FIB) $(DIJ-BIN) $(TEST-BIN) $(TEST-FIB)
 
-$(TARGET3): $(TARGET3).o $(TARGET1).o
-	$(CC) $(CFLAGS) -o $(TARGET3) $(TARGET3).o $(TARGET1).o
+$(DIJ-BIN): dijkstra.c bin-heap.c
+	$(CC) $(CLFAGS) -o $@ $^
+
+$(DIJ-FIB): dijkstra.c fib-heap.c
+	$(CC) $(CLFAGS) -D FIB -o $@ $^
+
+$(TEST-BIN): $(TEST-BIN).c bin-heap.c
+	$(CC) $(CLFAGS) -o $@ $^
+
+$(TEST-FIB): $(TEST-FIB).c fib-heap.c
+	$(CC) $(CLFAGS) -o $@ $^
 
 clean:
 	$(RM) *.o
-	$(RM) *.dot
 	$(RM) -r *.dSYM
-	$(RM) $(TARGET1) $(TARGET2) $(TARGET3)
+	$(RM) *.dot
+	$(RM) $(TEST-BIN) $(TEST-FIB) $(DIJ-BIN) $(DIJ-FIB)

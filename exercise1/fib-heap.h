@@ -20,10 +20,23 @@ struct node {
     void *data;             // The data contained by the node
 };
 
+//=============================================================================
+//  Heap functions
+//=============================================================================
+
 heap* make_heap();
 node find_min(heap *h);
 node* insert(heap *h, int key);
 node* delete_min(heap *h);
 void decrease_key(heap *h, node *n, int delta);
+
+//=============================================================================
+//  Auxiliary functions
+//=============================================================================
+
+int has_siblings(node *n);
+int has_children(node *n);
+int sibling_count(node *n);
+int root_count(heap *h);
 
 #endif
