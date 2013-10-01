@@ -198,24 +198,28 @@ int* args_to_distances(int length, char **args) {
     return distances;
 }
 
-int main(int argc, char **argv) {
-    // Random seed or seed from arguments
-    int seed;
-    if (argc == 2) {
-        seed = atoi(argv[1]);
-    } else {
-        seed = time(0);
+char* get_flag_value(int argc, char **argv, char *flag_short, char *flag_long) {
+    for (int i = 1; i < (argc - 1); i++) {
+        if (strcmp(argv[i], flag_short) == 0 || strcmp(argv[i], flag_long) == 0) {
+            return argv[i+1];
+        }
     }
+    return NULL;
+}
 
-    // The number of nodes
-    int testsize = 100;
-    srand(seed);
+int main(int argc, char **argv) {
+    // Seed flag, e.g. --seed 50
+    char *seed = get_flag_value(argc, argv, "-s", "--seed");
+    srand((seed != NULL) ? atoi(seed) : time(0));
+
+    // Size flag, e.g. --size 50
+    char *size = get_flag_value(argc, argv, "-n", "--size");
+    int testsize = (size != NULL) ? atoi(size) : 100;
 
     //int distances[] = {0,4,INFINITY,2,4,0,1,8,INFINITY,1,0,INFINITY,2,8,INFINITY,0};
     //edges = build_matrix(4, distances);
     int **edges = build_random_matrix(testsize);
     make_dot(edges, testsize, "dotdot.dot");
-
 
     // Create the nodes
     graphnode **nodes = malloc(testsize * sizeof(graphnode *));
