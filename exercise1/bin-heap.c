@@ -213,15 +213,3 @@ void sift_down(node *n) {
 
     sift_down(n);
 }
-
-void print_aux(node *n, int indent) {
-    if (n == NULL) return;
-    for (int i = 0; i < indent; i += 1) printf(" ");
-    printf("%d\n", n->key);
-    print_aux(n->left_child, indent + 3);
-    print_aux(n->right_child, indent + 3);
-}
-
-void print(heap *h) {
-    print_aux(h->root, 0);
-}
