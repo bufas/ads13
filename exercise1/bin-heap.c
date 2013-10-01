@@ -74,6 +74,7 @@ node* insert(heap *h, int key) {
 }
 
 void decrease_key(heap *h, node *n, int delta) {
+    printf("decrease key %d to %d\n", n->key, n->key - delta);
     n->key -= delta;
     bubble_up(h, n);
 }
@@ -93,6 +94,18 @@ node* delete_min(heap *h) {
     // Keep a pointer to the min element
     node *root = h->root;
 
+    if (h->size == 1) {
+        h->root = NULL;
+        h->size = 0;
+        return root;
+    } else if (h->size == 2) {
+        h->root = root->left_child;
+        h->root->parent = NULL;
+        h->size = 1;
+        root->left_child = NULL;
+        return root;
+    }
+
     // Find the last node
     int seenOne = 0;
     node *last = h->root;
@@ -106,6 +119,7 @@ node* delete_min(heap *h) {
 
         if (!seenOne && bitN) seenOne = 1;
     }
+    printf("Last child is %d and bitN is %d\n", last->key, bitN);
 
     // Update the last nodes parents child pointer to NULL
     if (bitN) last->parent->right_child = NULL;             // 1
@@ -118,7 +132,9 @@ node* delete_min(heap *h) {
 
     // Update old root's children's parent pointers
     root->left_child->parent = last;                        // 5
-    root->right_child->parent = last;                       // 6
+    if(root->right_child != NULL) {
+        root->right_child->parent = last;                   // 6
+    }
 
     // Update the heap fields
     h->size -= 1;
@@ -135,6 +151,8 @@ node* delete_min(heap *h) {
 
     // Free Willy Wonka
     //free(root);
+    root->left_child = NULL;
+    root->right_child = NULL;
     return root;
 }
 
@@ -167,7 +185,7 @@ void rotate_up(node *n) {
     if (sibling != NULL) sibling->parent = n;             // 3
 
     // Find out if parent is right or left child
-    if(grandparent != NULL) { 
+    if (grandparent != NULL) { 
         if (parent == grandparent->left_child) {
             // parent is left child
             grandparent->left_child = n;                  // 6
@@ -188,10 +206,10 @@ void sift_down(node *n) {
     // Return if there is no children (if left child is NULL then right child is NULL)
     if (n->left_child == NULL) return;
 
-    if (n->key < n->left_child->key) {
+    if (n->key <= n->left_child->key) {
         // Left child's key is greater than n's key
         if (n->right_child == NULL) return;
-        if (n->right_child->key > n->key) return;
+        if (n->right_child->key >= n->key) return;
 
         // Switch with right child
         rotate_up(n->right_child);
