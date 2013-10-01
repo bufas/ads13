@@ -198,10 +198,18 @@ int* args_to_distances(int length, char **args) {
     return distances;
 }
 
-int main() {
+int main(int argc, char **argv) {
+    // Random seed or seed from arguments
+    int seed;
+    if (argc == 2) {
+        seed = atoi(argv[1]);
+    } else {
+        seed = time(0);
+    }
+
     // The number of nodes
     int testsize = 100;
-    srand(time(0));
+    srand(seed);
 
     //int distances[] = {0,4,INFINITY,2,4,0,1,8,INFINITY,1,0,INFINITY,2,8,INFINITY,0};
     //edges = build_matrix(4, distances);
