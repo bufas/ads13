@@ -98,7 +98,7 @@ void shift_back(int *src, int length, int index) {
  * on every visit. By never generating INFINITY, the random walk
  * will produce a fully connected graph without shortcuts.
  */
-int** build_random_matrix(int n, int d) {
+int** build_random_matrix(int n, long d) {
     // Allocate the memory for the adjacency matrix
     int** matrix = (int**) malloc(n * sizeof(int*));
 
@@ -240,14 +240,14 @@ int main(int argc, char **argv) {
 
     // Density flag, e.g. --density 50
     char *dense = get_flag_value(argc, argv, "-d", "--density");
-    int density = testsize;
-    int max_density = ((testsize * testsize) - (3 * testsize)) / 2;
+    long density = testsize;
+    long max_density = (((long) testsize * testsize) - (3l * testsize)) / 2l;
     if (dense != NULL) {
         int pct = get_pct(dense);
         if (pct > 0) {
-            density = (max_density * pct) / 100;
+            density = (max_density * pct) / 100l;
         } else {
-            density = atoi(dense);
+            density = atol(dense);
             if (density > max_density) {
                 density = max_density;
             }
@@ -255,6 +255,7 @@ int main(int argc, char **argv) {
     } else {
         density = testsize;
     }
+    //printf("n: %d, d: %ld\n", testsize, density);
 
     // Print flag, e.g. --print
     int print = has_flag(argc, argv, "-p", "--print");
