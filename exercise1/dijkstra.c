@@ -207,6 +207,28 @@ char* get_flag_value(int argc, char **argv, char *flag_short, char *flag_long) {
     return NULL;
 }
 
+int has_flag(int argc, char **argv, char *flag_short, char *flag_long) {
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], flag_short) == 0 || strcmp(argv[i], flag_long) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int get_pct(char *dense) {
+    for (int i = 0; dense[i] != '\0'; i++) {
+        if (dense[i] == '%') {
+            char pct[i];
+            for (int j = 0; j < i; j++) {
+                pct[j] = dense[j];
+            }
+            return atoi(pct);
+        }
+    }
+    return -1;
+}
+
 int main(int argc, char **argv) {
     // Seed flag, e.g. --seed 50
     char *seed = get_flag_value(argc, argv, "-s", "--seed");
@@ -218,16 +240,28 @@ int main(int argc, char **argv) {
 
     // Density flag, e.g. --density 50
     char *dense = get_flag_value(argc, argv, "-d", "--density");
-    int density = (dense != NULL) ? atoi(dense) : testsize;
+    int density = testsize;
     int max_density = ((testsize * testsize) - (3 * testsize)) / 2;
-    if (density > max_density) {
-        density = max_density;
+    if (dense != NULL) {
+        int pct = get_pct(dense);
+        if (pct > 0) {
+            density = (max_density * pct) / 100;
+        } else {
+            density = atoi(dense);
+            if (density > max_density) {
+                density = max_density;
+            }
+        }
+    } else {
+        density = testsize;
     }
+
+    // Print flag, e.g. --print
+    int print = has_flag(argc, argv, "-p", "--print");
 
     //int distances[] = {0,4,INFINITY,2,4,0,1,8,INFINITY,1,0,INFINITY,2,8,INFINITY,0};
     //edges = build_matrix(4, distances);
     int **edges = build_random_matrix(testsize, density);
-    make_dot(edges, testsize, "dotdot.dot");
 
     // Create the nodes
     graphnode **nodes = malloc(testsize * sizeof(graphnode *));
@@ -243,30 +277,34 @@ int main(int argc, char **argv) {
     int source = rand() % testsize;
 
     // Print the configuration
-    printf("Source node: %d\n", source);
-    printf("    ");
-    for (int col = 0; col < testsize; col++) printf("%d ", col);
-    printf("\n   ");
-    for (int col = 0; col < testsize; col++) printf("--");
-    printf("\n");
-    for (int row = 0; row < testsize; row++) {
-        printf("%d | ", row);
-        for (int col = 0; col < testsize; col++) {
-            if (edges[row][col] == INFINITY) {
-                printf("- ");
-            } else {
-                printf("%d ", edges[row][col]);
-            }
-        }
+    if (print) {
+        printf("Source node: %d\n", source);
+        printf("    ");
+        for (int col = 0; col < testsize; col++) printf("%d ", col);
+        printf("\n   ");
+        for (int col = 0; col < testsize; col++) printf("--");
         printf("\n");
+        for (int row = 0; row < testsize; row++) {
+            printf("%d | ", row);
+            for (int col = 0; col < testsize; col++) {
+                if (edges[row][col] == INFINITY) {
+                    printf("- ");
+                } else {
+                    printf("%d ", edges[row][col]);
+                }
+            }
+            printf("\n");
+        }
     }
 
     // Call Dijkstras algorithm
     dijkstra(source, nodes, edges, testsize);
 
     // Print the result
-    for (int i = 0; i < testsize; i++) {
-        printf("Node %d: %d meter\n", i, nodes[i]->tentative_dist);
+    if (print) {
+        for (int i = 0; i < testsize; i++) {
+            printf("Node %d: %d meter\n", i, nodes[i]->tentative_dist);
+        }
     }
 
     // Free memory
