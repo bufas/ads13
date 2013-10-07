@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include <string.h>
 #include <limits.h>
 #ifdef FIB
@@ -298,8 +299,19 @@ int main(int argc, char **argv) {
         }
     }
 
+    // Set up the stopwatch, yo yo
+    struct rusage before;
+    struct rusage after;
+
     // Call Dijkstras algorithm
+    getrusage(RUSAGE_SELF, &before);
     dijkstra(source, nodes, edges, testsize);
+    getrusage(RUSAGE_SELF, &after);
+
+    // Print results
+    long utime = ((after.ru_utime.tv_sec - before.ru_utime.tv_sec) * 1000000) + after.ru_utime.tv_usec - before.ru_utime.tv_usec;
+    long stime = ((after.ru_stime.tv_sec - before.ru_stime.tv_sec) * 1000000) + after.ru_stime.tv_usec - before.ru_stime.tv_usec;
+    printf("%ld\n", utime+stime);
 
     // Print the result
     if (print) {
