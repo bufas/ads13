@@ -98,7 +98,7 @@ void shift_back(int *src, int length, int index) {
  * on every visit. By never generating INFINITY, the random walk
  * will produce a fully connected graph without shortcuts.
  */
-int** build_random_matrix(int n) {
+int** build_random_matrix(int n, int d) {
     // Allocate the memory for the adjacency matrix
     int** matrix = (int**) malloc(n * sizeof(int*));
 
@@ -145,10 +145,10 @@ int** build_random_matrix(int n) {
     }
 
     // Add some random shortcuts
-    for (int k = 0; k < n; k++) {
+    for (int k = 0; k < d; k++) {
         int i = rand() % n;
         int j = rand() % n;
-        if (i != j) {
+        if (i != j && matrix[i][j] == INFINITY) {
             int dist = 1 + (rand() % 9);
             matrix[i][j] = dist;
             matrix[j][i] = dist;
@@ -216,9 +216,17 @@ int main(int argc, char **argv) {
     char *size = get_flag_value(argc, argv, "-n", "--size");
     int testsize = (size != NULL) ? atoi(size) : 100;
 
+    // Density flag, e.g. --density 50
+    char *dense = get_flag_value(argc, argv, "-d", "--density");
+    int density = (dense != NULL) ? atoi(dense) : testsize;
+    int max_density = ((testsize * testsize) - (3 * testsize)) / 2;
+    if (density > max_density) {
+        density = max_density;
+    }
+
     //int distances[] = {0,4,INFINITY,2,4,0,1,8,INFINITY,1,0,INFINITY,2,8,INFINITY,0};
     //edges = build_matrix(4, distances);
-    int **edges = build_random_matrix(testsize);
+    int **edges = build_random_matrix(testsize, density);
     make_dot(edges, testsize, "dotdot.dot");
 
     // Create the nodes
