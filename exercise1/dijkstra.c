@@ -230,6 +230,12 @@ int get_pct(char *dense) {
     return -1;
 }
 
+void print_time(char *pre, struct rusage before, struct rusage after) {
+    long utime = ((after.ru_utime.tv_sec - before.ru_utime.tv_sec) * 1000000) + after.ru_utime.tv_usec - before.ru_utime.tv_usec;
+    long stime = ((after.ru_stime.tv_sec - before.ru_stime.tv_sec) * 1000000) + after.ru_stime.tv_usec - before.ru_stime.tv_usec;
+    printf("%s%ld\n", pre, (utime + stime));
+}
+
 int main(int argc, char **argv) {
     // Seed flag, e.g. --seed 50
     char *seed = get_flag_value(argc, argv, "-s", "--seed");
@@ -261,8 +267,11 @@ int main(int argc, char **argv) {
     // Print flag, e.g. --print
     int print = has_flag(argc, argv, "-p", "--print");
 
-    //int distances[] = {0,4,INFINITY,2,4,0,1,8,INFINITY,1,0,INFINITY,2,8,INFINITY,0};
-    //edges = build_matrix(4, distances);
+    // Set up the stopwatch, yo yo
+    struct rusage before_gen;
+    struct rusage after_gen;
+
+    getrusage(RUSAGE_SELF, &before_gen);
     int **edges = build_random_matrix(testsize, density);
 
     // Create the nodes
@@ -274,6 +283,8 @@ int main(int argc, char **argv) {
         node->index = i;
         nodes[i] = node;
     }
+    getrusage(RUSAGE_SELF, &after_gen);
+    print_time("generation: ", before_gen, after_gen);
 
     // Elect source
     int source = rand() % testsize;
@@ -299,19 +310,16 @@ int main(int argc, char **argv) {
         }
     }
 
-    // Set up the stopwatch, yo yo
-    struct rusage before;
-    struct rusage after;
+    struct rusage before_dijk;
+    struct rusage after_dijk;
 
     // Call Dijkstras algorithm
-    getrusage(RUSAGE_SELF, &before);
+    getrusage(RUSAGE_SELF, &before_dijk);
     dijkstra(source, nodes, edges, testsize);
-    getrusage(RUSAGE_SELF, &after);
+    getrusage(RUSAGE_SELF, &after_dijk);
+    print_time("dijkstra: ", before_dijk, after_dijk);
 
-    // Print results
-    long utime = ((after.ru_utime.tv_sec - before.ru_utime.tv_sec) * 1000000) + after.ru_utime.tv_usec - before.ru_utime.tv_usec;
-    long stime = ((after.ru_stime.tv_sec - before.ru_stime.tv_sec) * 1000000) + after.ru_stime.tv_usec - before.ru_stime.tv_usec;
-    printf("%ld\n", utime+stime);
+    print_time("total: ", before_gen, after_dijk);
 
     // Print the result
     if (print) {
