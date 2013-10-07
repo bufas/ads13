@@ -83,17 +83,6 @@ void make_dot(int **matrix, int n, char *filename) {
 }
 
 /**
- * Shift entries of an array back by one, effectively overwriting
- * the given index. This is a super easy way of "extracting" values
- * without having to allocate new arrays.
- */
-void shift_back(int *src, int length, int index) {
-    for (int i = index; i < length - 1; i++) {
-        src[i] = src[i+1];
-    }
-}
-
-/**
  * Build a random adjacency matrix by doing a random walk through
  * all the nodes of the assumed graph, generating random distances
  * on every visit. By never generating INFINITY, the random walk
@@ -141,7 +130,7 @@ int** build_random_matrix(int n, long d) {
         prev = curr;
 
         // Shift the array backwards
-        shift_back(unvisited, m, index);
+        unvisited[index] = unvisited[m-1];
         m--;
     }
 
