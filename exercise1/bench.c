@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <limits.h>
+
 #ifdef FIB
     #include "fib-heap.h"
 
@@ -68,7 +70,7 @@ void print_time(char *pre, struct rusage before, struct rusage after) {
     printf("%s%ld\n", pre, (utime + stime));
 }
 
-void delete_min_stress_test() {
+void delete_min_stress_test(int pow) {
     heap *h = make_heap();
 
     struct rusage before_ins;
@@ -77,7 +79,7 @@ void delete_min_stress_test() {
     getrusage(RUSAGE_SELF, &before_ins);
 
     // Insertion
-    int n = (1 << 20);
+    int n = (1 << pow);
     for (int i = 0; i < n; i++) {
         insert(h, i);
         insert(h, -i);
@@ -85,7 +87,7 @@ void delete_min_stress_test() {
     }
 
     getrusage(RUSAGE_SELF, &after_ins);
-    print_time("insertion: ", before_ins, after_ins);
+    print_time("ins: ", before_ins, after_ins);
 
     struct rusage before_del;
     struct rusage after_del;
@@ -104,15 +106,15 @@ void delete_min_stress_test() {
     }
 
     getrusage(RUSAGE_SELF, &after_del);
-    print_time("deletion: ", before_del, after_del);
+    print_time("del: ", before_del, after_del);
 
     free(h);
 }
 
-void decrease_key_stress_test() {
+void decrease_key_stress_test(int pow) {
     heap *h = make_heap();
 
-    int n = (1 << 20);
+    int n = (1 << pow);
 
     // Make an array to contain all the nodes
     node **nodes = (node**) malloc(3 * n * sizeof(node*));
@@ -125,18 +127,21 @@ void decrease_key_stress_test() {
         nodes[count++] = insert(h, n - i);
     }
 
+    insert(h, INT_MIN);
+    delete_min(h);
+
     struct rusage before_dec;
     struct rusage after_dec;
 
     getrusage(RUSAGE_SELF, &before_dec);
 
     // Decrease
-    for (int i = 0; i < (1<<20); i++) {
+    for (int i = 0; i < (1<<pow); i++) {
         decrease_key(h, nodes[(i * 29) % (n * 3)], (i * 13) % 500);
     }
 
     getrusage(RUSAGE_SELF, &after_dec);
-    print_time("decrease key: ", before_dec, after_dec);
+    print_time("dec: ", before_dec, after_dec);
 
     // Free Willy!
     free(nodes);
@@ -144,7 +149,10 @@ void decrease_key_stress_test() {
 }
 
 int main() {
-   delete_min_stress_test();
-   decrease_key_stress_test();
-   return 0;
+    for (int pow = 15; pow < 25; pow++) {
+        printf("%d\n", 1 << pow);
+        delete_min_stress_test(pow);
+        decrease_key_stress_test(pow);
+    }
+    return 0;
 }
