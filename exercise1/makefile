@@ -13,22 +13,22 @@ BENCH-FIB=bench-fib
 all: $(DIJ-FIB) $(DIJ-BIN) $(TEST-BIN) $(TEST-FIB) $(BENCH-FIB) $(BENCH-BIN) 
 
 $(DIJ-BIN): dijkstra.c bin-heap.c
-	$(CC) $(CLFAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 $(DIJ-FIB): dijkstra.c fib-heap.c
-	$(CC) $(CLFAGS) -D FIB -o $@ $^
+	$(CC) $(CFLAGS) -D FIB -o $@ $^
 
 $(TEST-BIN): $(TEST-BIN).c bin-heap.c
-	$(CC) $(CLFAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 $(TEST-FIB): $(TEST-FIB).c fib-heap.c
-	$(CC) $(CLFAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 $(BENCH-BIN): bench.c bin-heap.c
-	$(CC) $(CLFAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 $(BENCH-FIB): bench.c fib-heap.c
-	$(CC) $(CLFAGS) -D FIB -o $@ $^
+	$(CC) $(CFLAGS) -D FIB -o $@ $^
 
 clean:
 	$(RM) *.o
