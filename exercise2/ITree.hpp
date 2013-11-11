@@ -7,15 +7,16 @@ class ITree {
 
     protected:
 
-        int size;
-        int max;
-        int min;
-        int n;
-        int sqrtn;
+        int _size;
+        int _max;
+        int _min;
+        int _n;
+        int _sqrtn;
 
     public:
 
         ITree(int);
+        virtual ~ITree() {}
 
         int getSize();
 
@@ -24,17 +25,5 @@ class ITree {
         virtual void remove(int) = 0;
 
 };
-
-ITree::ITree(int n) {
-    this->size  = 0;
-    this->max   = -1;
-    this->min   = n;
-    this->n     = n;
-    this->sqrtn = (int) sqrt(n); // TODO round to nearest power of 2
-}
-
-int ITree::getSize() {
-    return size;
-}
 
 #endif

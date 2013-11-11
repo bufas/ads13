@@ -1,68 +1,60 @@
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
-#include "ITree.hpp"
 
-class Tree : public ITree {
+#include "Tree.hpp"
+#include "Leaf.hpp"
 
-    private:
-
-        ITree *top;
-        ITree **bottom;
-
-    public:
-
-        Tree(int);
-        ~Tree();
-
-        int succ(int);
-        void insert(int);
-        void remove(int);
-
-};
-
-Tree::Tree(int n) : ITree(n) {
-    this->top    = NULL;
-    this->bottom = (ITree **) calloc(sqrtn, sizeof( ITree* ));
+Tree::Tree(int n) : ITree(n), _top(nullptr), _bottom(new ITree*[_sqrtn]) {
+    std::cout << "Create Tree("<<_n<<") with sqrt = " << _sqrtn << std::endl;
+    std::fill(_bottom, _bottom + _sqrtn, nullptr);
 }
 
 Tree::~Tree() {
-    std::cout << "Destructing Tree(" << n << ")" << std::endl;
-    delete top;
-    for (int i = 0; i < sqrtn; i++) {
-        delete bottom[i];
+    std::cout << "Destructing Tree(" << _n << ")" << std::endl;
+    delete _top;
+    for (int i = 0; i < _sqrtn; i++) {
+        delete _bottom[i];
     }
-    free(this->bottom);
+    delete[] _bottom;
 }
 
 // TODO size gets update even if the same index is inserted twice
 void Tree::insert(int i) {
-    int a = i / sqrtn;
-    int b = i % sqrtn;
+    std::cout << "INSERTING " << i << std::endl;
+    int a = i / _sqrtn;
+    int b = i % _sqrtn;
 
-    // n = 1 is our stop condition
-    if (n > 1) {
-        // Lazy initialization of bottom
-        if (bottom[a] == NULL) {
-            std::cout << "  Create bottom[" << a << "] Tree(" << sqrtn << ")" << std::endl;
-            bottom[a] = new Tree(sqrtn);
-        }
+    initialize_tree(&_bottom[a]);    // Lazy initialization of bottom
 
-        // Insert in top and bottom trees
-        if (bottom[a]->getSize() == 0) {
-            // Lazy initialization of top
-            if (top == NULL) {
-                std::cout << "  Create top Tree(" << sqrtn << ")" << std::endl;
-                top = new Tree(sqrtn);
-            }
-            std::cout << "top.insert(" << a << ")" << std::endl;
-            top->insert(a);
-        }
-        std::cout << "bottom["<<a<<"].insert(" << b << ")" << std::endl;
-        bottom[a]->insert(b);
+    // Insert in top and bottom trees
+    if (_bottom[a]->getSize() == 0) {
+        initialize_tree(&_top);      // Lazy initialization of top
+        std::cout << "top.insert(" << a << ")" << std::endl;
+        _top->insert(a);
     }
+    std::cout << "bottom["<<a<<"].insert("<<b<<")" << std::endl;
+    _bottom[a]->insert(b);
 
     // Update fields
-    size++;
-    if (i < min) min = i;
-    if (i > max) max = i;
+    _size++;
+    if (i < _min) _min = i;
+    if (i > _max) _max = i;
+}
+
+void Tree::remove(int i) {
+    // TODO
+}
+
+int Tree::succ(int i) {
+    return -1; // TODO
+}
+
+void Tree::initialize_tree(ITree **tree) {
+    if (*tree == nullptr) {
+        if (_sqrtn == 2) {
+            *tree = new Leaf();
+        } else {
+            *tree = new Tree(_sqrtn);
+        }
+    }
 }

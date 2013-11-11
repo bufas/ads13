@@ -1,7 +1,8 @@
-SOURCES=Driver.cpp Tree.cpp Leaf.cpp
+SOURCES=Driver.cpp ITree.cpp Tree.cpp Leaf.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 TEST=test
-CXXFLAGS=-g -Wall
+CXX=clang++
+CXXFLAGS=-g -Wall -std=c++11 -stdlib=libc++
 
 $(TEST): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS)
