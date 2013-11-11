@@ -21,9 +21,28 @@ void Leaf::remove(int i) {
 	entries[i] = false;
 
 	// Update fields
-    if (i < _min) _min = i;
-    if (i > _max) _max = i;
+    /*
+     * e[0] e[1] | min max
+     * ----------+--------
+     *   T    F  |  0   0
+     *   T    T  |  0   1
+     *   F    F  |  n  -1
+     *   F    T  |  1   1
+     */
 	_size -= 1;
+    if (entries[0] && !entries[1]) {
+        _min = 0;
+        _max = 0;
+    } else if (entries[0] && entries[1]) {
+        _min = 0;
+        _max = 1;
+    } else if (!entries[0] && !entries[1]) {
+        _min = _n;
+        _max = -1;
+    } else if (!entries[0] && entries[1]) {
+        _min = 1;
+        _max = 1;
+    }
 }
 
 int Leaf::succ(int i) {

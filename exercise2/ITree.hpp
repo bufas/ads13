@@ -18,7 +18,9 @@ class ITree {
         ITree(int);
         virtual ~ITree() {}
 
-        int getSize();
+        int get_size();
+        int get_max();
+        int get_min();
 
         virtual int succ(int) = 0;
         virtual void insert(int) = 0;

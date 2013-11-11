@@ -3,10 +3,13 @@
 #include "Tree.hpp"
 
 int main() {
-	//std::cout << i << nearPower(i) << std::endl;
-
     Tree t(6);
-    t.insert(5);
+    t.insert(4);
+    t.insert(1);
+    t.remove(4);
+    t.insert(4);
+    t.remove(1);
+    t.remove(4);
     return 0;
 }
 

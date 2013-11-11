@@ -27,7 +27,7 @@ void Tree::insert(int i) {
     initialize_tree(&_bottom[a]);    // Lazy initialization of bottom
 
     // Insert in top and bottom trees
-    if (_bottom[a]->getSize() == 0) {
+    if (_bottom[a]->get_size() == 0) {
         initialize_tree(&_top);      // Lazy initialization of top
         std::cout << "top.insert(" << a << ")" << std::endl;
         _top->insert(a);
@@ -42,7 +42,19 @@ void Tree::insert(int i) {
 }
 
 void Tree::remove(int i) {
-    // TODO
+    std::cout << "REMOVING " << i << std::endl;
+    int a = i / _sqrtn;
+    int b = i % _sqrtn;
+
+    // Remove from bottom (and top if bottom becomes empty)
+    _bottom[a]->remove(b);
+    if (_bottom[a]->get_size() == 0) {
+        _top->remove(a);
+    }
+
+    // Update fields
+    _size--;
+    set_min_max();
 }
 
 int Tree::succ(int i) {
@@ -58,3 +70,19 @@ void Tree::initialize_tree(ITree **tree) {
         }
     }
 }
+
+void Tree::set_min_max() {
+    // TODO verify the correctness of this
+    if (_size == 0) {
+        std::cout << "YAY we are in the special case" << std::endl;
+        _min = _n;
+        _max = -1;
+        return;
+    }
+
+    std::cout << "Top vals " << _top->get_max() << " " << _top->get_min() << std::endl;
+
+    _max = _top->get_max() * _sqrtn + _bottom[_top->get_max()]->get_max();
+    _min = _top->get_min() * _sqrtn + _bottom[_top->get_min()]->get_min();
+}
+

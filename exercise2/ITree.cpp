@@ -16,6 +16,14 @@ ITree::ITree(int n) : _size(0), _max(-1), _min(n), _n(n) {
 	//_sqrtn = (cur - real_root > real_root - pre) ? pre : cur;
 }
 
-int ITree::getSize() {
+int ITree::get_max() {
+    return _max;
+}
+
+int ITree::get_min() {
+    return _min;
+}
+
+int ITree::get_size() {
     return _size;
 }

@@ -11,6 +11,7 @@ class Tree : public ITree {
         ITree **_bottom;
 
         void initialize_tree(ITree **);
+        void set_min_max();
 
     public:
 
