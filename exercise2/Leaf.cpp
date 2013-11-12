@@ -46,6 +46,8 @@ void Leaf::remove(int i) {
 }
 
 int Leaf::succ(int i) {
-    return -1; // TODO
+    if (i == 0 && entries[0]) return 0;
+    else if (entries[1]) return 1;
+    return -1;
 }
 

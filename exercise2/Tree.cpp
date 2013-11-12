@@ -58,7 +58,19 @@ void Tree::remove(int i) {
 }
 
 int Tree::succ(int i) {
-    return -1; // TODO
+    int a = i / _sqrtn;
+    int b = i % _sqrtn;
+
+    int j = -1;
+    if (_bottom[a] != nullptr && _bottom[a]->get_max() >= b) {
+        j = a * _sqrtn + _bottom[a]->succ(b);
+    } else {
+        int c = _top->succ(a + 1);
+        if (c == -1) return -1;
+        j = c * _sqrtn + _bottom[c]->get_min();
+    }
+
+    return j;
 }
 
 void Tree::initialize_tree(ITree **tree) {
