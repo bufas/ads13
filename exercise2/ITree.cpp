@@ -27,3 +27,4 @@ int ITree::get_min() {
 int ITree::get_size() {
     return _size;
 }
+

@@ -21,6 +21,9 @@ class Tree : public ITree {
         virtual int succ(int) override;
         virtual void insert(int) override;
         virtual void remove(int) override;
+        virtual int find_min() override;
+        virtual void remove_min() override;
+        virtual void pretty_print(int) override;
 
 };
 

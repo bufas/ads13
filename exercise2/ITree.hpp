@@ -1,8 +1,6 @@
 #ifndef I_TREE_HPP_
 #define I_TREE_HPP_
 
-#include <math.h>
-
 class ITree {
 
     protected:
@@ -25,6 +23,9 @@ class ITree {
         virtual int succ(int) = 0;
         virtual void insert(int) = 0;
         virtual void remove(int) = 0;
+        virtual int find_min() = 0;
+        virtual void remove_min() = 0;
+        virtual void pretty_print(int) = 0;
 
 };
 

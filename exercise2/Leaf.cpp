@@ -1,5 +1,6 @@
 #include "Leaf.hpp"
 #include <assert.h>
+#include <iostream>
 
 Leaf::Leaf() : ITree(2) {
 	entries[0] = false;
@@ -49,5 +50,17 @@ int Leaf::succ(int i) {
     if (i == 0 && entries[0]) return 0;
     else if (entries[1]) return 1;
     return -1;
+}
+
+int Leaf::find_min() {
+    return _min;
+}
+
+void Leaf::remove_min() {
+    remove(find_min());
+}
+
+void Leaf::pretty_print(int indent) {
+    printf("%*s" "[%d,%d]", indent, " ", entries[0], entries[1]);
 }
 

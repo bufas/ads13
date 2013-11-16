@@ -14,9 +14,12 @@ class Leaf : public ITree {
         Leaf();
         virtual ~Leaf() override {}
 
+        virtual int succ(int) override;
         virtual void insert(int) override;
         virtual void remove(int) override;
-        virtual int succ(int) override;
+        virtual int find_min() override;
+        virtual void remove_min() override;
+        virtual void pretty_print(int) override;
 
 };
 

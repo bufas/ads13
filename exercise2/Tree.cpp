@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <limits.h>
 
 #include "Tree.hpp"
 #include "Leaf.hpp"
@@ -10,7 +11,6 @@ Tree::Tree(int n) : ITree(n), _top(nullptr), _bottom(new ITree*[_sqrtn]) {
 }
 
 Tree::~Tree() {
-    std::cout << "Destructing Tree(" << _n << ")" << std::endl;
     delete _top;
     for (int i = 0; i < _sqrtn; i++) {
         delete _bottom[i];
@@ -20,7 +20,18 @@ Tree::~Tree() {
 
 // TODO size gets update even if the same index is inserted twice
 void Tree::insert(int i) {
-    std::cout << "INSERTING " << i << std::endl;
+    if (_size == 0) {
+        _size++;
+        _max = _min = i;
+        return;
+    }
+
+    if (_min > i) {
+        int tmp = i;
+        i       = _min;
+        _min    = tmp;
+    }
+
     int a = i / _sqrtn;
     int b = i % _sqrtn;
 
@@ -29,10 +40,8 @@ void Tree::insert(int i) {
     // Insert in top and bottom trees
     if (_bottom[a]->get_size() == 0) {
         initialize_tree(&_top);      // Lazy initialization of top
-        std::cout << "top.insert(" << a << ")" << std::endl;
         _top->insert(a);
     }
-    std::cout << "bottom["<<a<<"].insert("<<b<<")" << std::endl;
     _bottom[a]->insert(b);
 
     // Update fields
@@ -42,7 +51,17 @@ void Tree::insert(int i) {
 }
 
 void Tree::remove(int i) {
-    std::cout << "REMOVING " << i << std::endl;
+    if (_size <= 1) {
+        _size--;
+        set_min_max();
+        return;
+    }
+
+    if (_min == i) {
+        int tmp = _top->get_min() * _sqrtn + _bottom[_top->get_min()]->get_min();
+        i = _min = tmp;
+    }
+
     int a = i / _sqrtn;
     int b = i % _sqrtn;
 
@@ -54,23 +73,43 @@ void Tree::remove(int i) {
 
     // Update fields
     _size--;
-    set_min_max();
+    if (_size == 1) {
+        // TODO this can be inserted in set_min_max, but needs i as parameter
+        if (_min == i) _min = _max;
+        if (_max == i) _max = _min;
+    } else {
+        set_min_max();
+    }
 }
 
+// INT_MAX represents infinity (a successor does not exist)
+// TODO something is wrong with the return of INT_MAX
 int Tree::succ(int i) {
     int a = i / _sqrtn;
     int b = i % _sqrtn;
 
-    int j = -1;
+    int j = INT_MAX;
     if (_bottom[a] != nullptr && _bottom[a]->get_max() >= b) {
         j = a * _sqrtn + _bottom[a]->succ(b);
-    } else {
+    } else if (_top != nullptr) {
         int c = _top->succ(a + 1);
-        if (c == -1) return -1;
+        if (c == INT_MAX) return INT_MAX;
         j = c * _sqrtn + _bottom[c]->get_min();
     }
 
+    if (i <= _min && _min < j) {
+        j = _min;
+    }
+
     return j;
+}
+
+int Tree::find_min() {
+    return _min;
+}
+
+void Tree::remove_min() {
+    remove(find_min());
 }
 
 void Tree::initialize_tree(ITree **tree) {
@@ -83,8 +122,21 @@ void Tree::initialize_tree(ITree **tree) {
     }
 }
 
+void Tree::pretty_print(int indent) {
+    printf("%*s" "Tree %d [min=%d max=%d size=%d]\n", indent, " ", _n, _min, _max, _size);
+    if (_top != nullptr) {
+        printf("%*s" "top\n", indent + 4, " ");
+        _top->pretty_print(indent + 4);
+    }
+    for (int i = 0; i < _sqrtn; i++) {
+        if (_bottom[i] != nullptr) {
+            printf("%*s" "bot[%d]\n", indent + 4, " ", i);
+            _bottom[i]->pretty_print(indent + 4);
+        }
+    }
+}
+
 void Tree::set_min_max() {
-    // TODO verify the correctness of this
     if (_size == 0) {
         _min = _n;
         _max = -1;
