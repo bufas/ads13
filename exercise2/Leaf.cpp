@@ -61,6 +61,6 @@ void Leaf::remove_min() {
 }
 
 void Leaf::pretty_print(int indent) {
-    printf("%*s" "[%d,%d]", indent, " ", entries[0], entries[1]);
+    printf("[%d,%d]\n", entries[0], entries[1]);
 }
 

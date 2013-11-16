@@ -6,8 +6,16 @@
 #include "Leaf.hpp"
 
 Tree::Tree(int n) : ITree(n), _top(nullptr), _bottom(new ITree*[_sqrtn]) {
-    std::cout << "Create Tree("<<_n<<") with sqrt = " << _sqrtn << std::endl;
-    std::fill(_bottom, _bottom + _sqrtn, nullptr);
+    // Initialize top and bottom trees
+    if (_sqrtn == 2)  {
+        // Initialize as leaves
+        _top = new Leaf();
+        for (int i = 0; i < _sqrtn; i++) _bottom[i] = new Leaf();
+    } else {
+        // Initialize as trees
+        _top = new Tree(_sqrtn);
+        for (int i = 0; i < _sqrtn; i++) _bottom[i] = new Tree(_sqrtn);
+    }
 }
 
 Tree::~Tree() {
@@ -35,11 +43,8 @@ void Tree::insert(int i) {
     int a = i / _sqrtn;
     int b = i % _sqrtn;
 
-    initialize_tree(&_bottom[a]);    // Lazy initialization of bottom
-
     // Insert in top and bottom trees
     if (_bottom[a]->get_size() == 0) {
-        initialize_tree(&_top);      // Lazy initialization of top
         _top->insert(a);
     }
     _bottom[a]->insert(b);
@@ -114,25 +119,15 @@ void Tree::remove_min() {
     remove(find_min());
 }
 
-void Tree::initialize_tree(ITree **tree) {
-    if (*tree == nullptr) {
-        if (_sqrtn == 2) {
-            *tree = new Leaf();
-        } else {
-            *tree = new Tree(_sqrtn);
-        }
-    }
-}
-
 void Tree::pretty_print(int indent) {
-    printf("%*s" "Tree %d [min=%d max=%d size=%d]\n", indent, " ", _n, _min, _max, _size);
+    printf("Tree %d [min=%d max=%d size=%d]\n", _n, _min, _max, _size);
     if (_top != nullptr) {
-        printf("%*s" "top\n", indent + 4, " ");
+        printf("%*s" "top ", indent + 4, " ");
         _top->pretty_print(indent + 4);
     }
     for (int i = 0; i < _sqrtn; i++) {
         if (_bottom[i] != nullptr) {
-            printf("%*s" "bot[%d]\n", indent + 4, " ", i);
+            printf("%*s" "bot[%d] ", indent + 4, " ", i);
             _bottom[i]->pretty_print(indent + 4);
         }
     }
