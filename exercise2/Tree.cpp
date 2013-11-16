@@ -83,8 +83,9 @@ void Tree::remove(int i) {
 }
 
 // INT_MAX represents infinity (a successor does not exist)
-// TODO something is wrong with the return of INT_MAX
 int Tree::succ(int i) {
+    if (_size == 0) return INT_MAX;
+
     int a = i / _sqrtn;
     int b = i % _sqrtn;
 
@@ -93,8 +94,9 @@ int Tree::succ(int i) {
         j = a * _sqrtn + _bottom[a]->succ(b);
     } else if (_top != nullptr) {
         int c = _top->succ(a + 1);
-        if (c == INT_MAX) return INT_MAX;
-        j = c * _sqrtn + _bottom[c]->get_min();
+        if (c != INT_MAX) {
+            j = c * _sqrtn + _bottom[c]->get_min();
+        }
     }
 
     if (i <= _min && _min < j) {
