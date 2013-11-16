@@ -55,16 +55,24 @@ void Tree::insert(int i) {
     if (i > _max) _max = i;
 }
 
+// TODO handle when trying to delete elements that are not in the tree
 void Tree::remove(int i) {
-    if (_size <= 1) {
+    if (_size == 0) return;
+    if (_size == 1 && _min != i) return;
+
+    if (_size == 1) {
         _size--;
-        set_min_max();
+        _min = _n;
+        _max = -1;
         return;
     }
 
+    // The smallest element are not physically in the tree. It is just represented
+    // by _min. When this is deleted, we need to find the new min element, set _min
+    // and delete the new _min from the tree.
     if (_min == i) {
-        int tmp = _top->get_min() * _sqrtn + _bottom[_top->get_min()]->get_min();
-        i = _min = tmp;
+        _min = _top->get_min() * _sqrtn + _bottom[_top->get_min()]->get_min();
+        i = _min;
     }
 
     int a = i / _sqrtn;
@@ -78,26 +86,21 @@ void Tree::remove(int i) {
 
     // Update fields
     _size--;
-    if (_size == 1) {
-        // TODO this can be inserted in set_min_max, but needs i as parameter
-        if (_min == i) _min = _max;
-        if (_max == i) _max = _min;
-    } else {
-        set_min_max();
-    }
+    set_min_max();
 }
 
 // INT_MAX represents infinity (a successor does not exist)
 int Tree::succ(int i) {
     if (_size == 0) return INT_MAX;
+    if (_size == 1) return (_min > i) ? _min : INT_MAX;
 
     int a = i / _sqrtn;
     int b = i % _sqrtn;
 
     int j = INT_MAX;
-    if (_bottom[a] != nullptr && _bottom[a]->get_max() >= b) {
+    if (_bottom[a]->get_max() >= b) {
         j = a * _sqrtn + _bottom[a]->succ(b);
-    } else if (_top != nullptr) {
+    } else {
         int c = _top->succ(a + 1);
         if (c != INT_MAX) {
             j = c * _sqrtn + _bottom[c]->get_min();
@@ -140,7 +143,11 @@ void Tree::set_min_max() {
         return;
     }
 
+    if (_size == 1) {
+        _max = _min;
+        return;
+    }
+
     _max = _top->get_max() * _sqrtn + _bottom[_top->get_max()]->get_max();
-    _min = _top->get_min() * _sqrtn + _bottom[_top->get_min()]->get_min();
 }
 
