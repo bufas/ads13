@@ -1,21 +1,19 @@
+#include "Tree.hpp"
+
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <limits.h>
 
-#include "Tree.hpp"
-#include "Leaf.hpp"
+Tree::Tree(int n) : _size(0), _max(-1), _min(n), _n(n), _top(nullptr) {
+    float real_root = std::sqrt(_n);
 
-Tree::Tree(int n) : ITree(n), _top(nullptr), _bottom(new ITree*[_sqrtn]) {
-    // Initialize top and bottom trees
-    if (_sqrtn == 2)  {
-        // Initialize as leaves
-        _top = new Leaf();
-        for (int i = 0; i < _sqrtn; i++) _bottom[i] = new Leaf();
-    } else {
-        // Initialize as trees
-        _top = new Tree(_sqrtn);
-        for (int i = 0; i < _sqrtn; i++) _bottom[i] = new Tree(_sqrtn);
-    }
+    // Take sqrt and round up to nearest power of 2
+    _sqrtn = 1;
+    while (_sqrtn < real_root) _sqrtn *= 2;
+
+    _bottom = new Tree*[_sqrtn];
+    std::fill(_bottom, _bottom + _sqrtn, nullptr);
 }
 
 Tree::~Tree() {
@@ -44,7 +42,9 @@ void Tree::insert(int i) {
     int b = i % _sqrtn;
 
     // Insert in top and bottom trees
-    if (_bottom[a]->get_size() == 0) {
+    if (_bottom[a] == nullptr) _bottom[a] = new Tree(_sqrtn);
+    if (_bottom[a]->_size == 0) {
+        if (_top == nullptr) _top = new Tree(_sqrtn);
         _top->insert(a);
     }
     _bottom[a]->insert(b);
@@ -71,7 +71,7 @@ void Tree::remove(int i) {
     // by _min. When this is deleted, we need to find the new min element, set _min
     // and delete the new _min from the tree.
     if (_min == i) {
-        _min = _top->get_min() * _sqrtn + _bottom[_top->get_min()]->get_min();
+        _min = _top->_min * _sqrtn + _bottom[_top->_min]->_min;
         i = _min;
     }
 
@@ -80,8 +80,14 @@ void Tree::remove(int i) {
 
     // Remove from bottom (and top if bottom becomes empty)
     _bottom[a]->remove(b);
-    if (_bottom[a]->get_size() == 0) {
+    if (_bottom[a]->_size == 0) {
+        delete _bottom[a];
+        _bottom[a] = nullptr;
         _top->remove(a);
+        if(_top->_size == 0) {
+            delete _top;
+            _top = nullptr;
+        }
     }
 
     // Update fields
@@ -89,21 +95,25 @@ void Tree::remove(int i) {
     set_min_max();
 }
 
-// INT_MAX represents infinity (a successor does not exist)
 int Tree::succ(int i) {
-    if (_size == 0) return INT_MAX;
-    if (_size == 1) return (_min > i) ? _min : INT_MAX;
+    return succ_aux(i+1);
+}
+
+// INT_MAX represents infinity (a successor does not exist)
+int Tree::succ_aux(int i) {
+    if (_size == 0 || i > _n - 1) return INT_MAX;
+    if (_size == 1) return (_min >= i) ? _min : INT_MAX;
 
     int a = i / _sqrtn;
     int b = i % _sqrtn;
 
     int j = INT_MAX;
-    if (_bottom[a]->get_max() >= b) {
-        j = a * _sqrtn + _bottom[a]->succ(b);
-    } else {
-        int c = _top->succ(a + 1);
+    if (_bottom[a] != nullptr && _bottom[a]->_max >= b) {
+        j = a * _sqrtn + _bottom[a]->succ_aux(b);
+    } else if (_top != nullptr) {
+        int c = _top->succ_aux(a + 1);
         if (c != INT_MAX) {
-            j = c * _sqrtn + _bottom[c]->get_min();
+            j = c * _sqrtn + _bottom[c]->_min;
         }
     }
 
@@ -148,6 +158,6 @@ void Tree::set_min_max() {
         return;
     }
 
-    _max = _top->get_max() * _sqrtn + _bottom[_top->get_max()]->get_max();
+    _max = _top->_max * _sqrtn + _bottom[_top->_max]->_max;
 }
 
