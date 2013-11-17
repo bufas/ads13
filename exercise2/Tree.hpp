@@ -23,6 +23,7 @@ class Tree {
         virtual ~Tree();
 
         virtual int succ(int);
+        virtual int pred(int);
         virtual void insert(int);
         virtual void remove(int);
         virtual int find_min();

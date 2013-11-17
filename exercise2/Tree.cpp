@@ -124,6 +124,31 @@ int Tree::succ_aux(int i) {
     return j;
 }
 
+// -1 represents that no predecessor exists
+int Tree::pred(int i) {
+    if (_size == 0 || i < _min) return -1;
+    if (_size == 1 && i > _min) return _min;
+
+    int a = i / _sqrtn;
+    int b = i % _sqrtn;
+
+    int j = -1;
+    if (_bottom[a] != nullptr && _bottom[a]->_min < b) {
+        j = a * _sqrtn + _bottom[a]->pred(b);
+    } else if (_top != nullptr) {
+        int c = _top->pred(a);
+        if (c != -1) {
+            j = c * _sqrtn + _bottom[c]->_max;
+        }
+    }
+
+    if (j == -1 && i > _min) {
+        j = _min;
+    }
+
+    return j;
+}
+
 int Tree::find_min() {
     return _min;
 }
