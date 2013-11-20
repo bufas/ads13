@@ -5,7 +5,7 @@
 #include <iostream>
 #include <limits.h>
 
-Tree::Tree(int n) : _size(0), _max(-1), _min(n), _n(n), _top(nullptr) {
+Tree::Tree(int n) : _size(0), _max(-1), _min(n), _n(n), _min_count(0), _top(nullptr) {
     float real_root = std::sqrt(_n);
 
     // Take sqrt and round up to nearest power of 2
@@ -24,10 +24,21 @@ Tree::~Tree() {
     delete[] _bottom;
 }
 
-// TODO size gets update even if the same index is inserted twice
+void Tree::decrease_key(int i, int delta) {
+    remove(i);
+    insert(i - delta);
+}
+
 void Tree::insert(int i) {
+    if (i == _min) {
+        _min_count++;
+        _size++;
+        return;
+    }
+
     if (_size == 0) {
         _size++;
+        _min_count++;
         _max = _min = i;
         return;
     }
@@ -42,28 +53,39 @@ void Tree::insert(int i) {
     int b = i % _sqrtn;
 
     // Insert in top and bottom trees
-    if (_bottom[a] == nullptr) _bottom[a] = new Tree(_sqrtn);
+    if (_bottom[a] == nullptr) {
+        _bottom[a] = new Tree(_sqrtn);
+    }
     if (_bottom[a]->_size == 0) {
-        if (_top == nullptr) _top = new Tree(_sqrtn);
+        if (_top == nullptr) {
+            _top = new Tree(_sqrtn);
+        }
         _top->insert(a);
     }
     _bottom[a]->insert(b);
 
     // Update fields
     _size++;
-    if (i < _min) _min = i;
     if (i > _max) _max = i;
 }
 
 // TODO handle when trying to delete elements that are not in the tree
 void Tree::remove(int i) {
     if (_size == 0) return;
-    if (_size == 1 && _min != i) return;
 
     if (_size == 1) {
+        if (_min == i) {
+            _size--;
+            _min_count--;
+            _min = _n;
+            _max = -1;
+        }
+        return;
+    }
+
+    if (i == _min) {
+        _min_count--;
         _size--;
-        _min = _n;
-        _max = -1;
         return;
     }
 

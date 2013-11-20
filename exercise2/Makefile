@@ -1,4 +1,4 @@
-SOURCES=Driver.cpp ITree.cpp Tree.cpp Leaf.cpp
+SOURCES=Driver.cpp Tree.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 TEST=test
 CXX=clang++

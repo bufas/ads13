@@ -29,31 +29,29 @@ int main() {
         else printf("SUCCESS 5\n");
     }
 
-    //t.pretty_print(0);
-
     for (int i = 1; i < TREESIZE; i++) {
         if (t.pred(i) != i - 1) printf("ERROR! 6 pred(%d) != %d it is %d\n", i, i - 1, t.pred(i));
         else printf("SUCCESS 6\n");
     }
 
+    // LOL multiple inserts
 
-    // for (int i = 0; i < 4; i++) {
-    //     printf("Inserting %d\n", i);
-    //     t.insert(i);
-    //     t.pretty_print(0);
-    // }
+    Tree t2(TREESIZE);
 
-    // printf("\n");
-    // printf("Remove 2\n");
-    // t.remove(2);
+    t2.insert(1);
+    t2.insert(1);
+    t2.insert(1);
 
-    // t.pretty_print(0);
-    // printf("\n");
+    t2.remove(1);
+
+    t2.insert(12);
+    t2.insert(12);
+
+    t2.decrease_key(12, 6);
+
+    t2.pretty_print(0);
 
 
-    // for (int i = 0; i < 4; i++) {
-    //     printf("Successor of %d is %d\n", i, t.succ(i));
-    // }
 
     return 0;
 }

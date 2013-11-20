@@ -10,6 +10,7 @@ class Tree {
         int _min;
         int _n;
         int _sqrtn;
+        int _min_count;
 
         Tree *_top;
         Tree **_bottom;
@@ -23,6 +24,7 @@ class Tree {
         virtual ~Tree();
 
         virtual int succ(int);
+        virtual void decrease_key(int, int);
         virtual int pred(int);
         virtual void insert(int);
         virtual void remove(int);
