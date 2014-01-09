@@ -1,0 +1,73 @@
+  =====================
+ // BITS AND PIECES //
+=====================
+
+
+heap.hpp  &  node.hpp
+=====================
+
+Interfaces for heap and node; could probably do with some cleanup if time
+permits. Templates used as Java generics.
+
+
+
+bin-heap.cpp  &  fib-heap.cpp
+=============================
+
+Binary and Fibonacci heap implementations. Ported from C versions by a
+simple process of manual find/replace and structural -> object-oriented
+conversions. Messy, may need cleanup (compile with -O3)
+
+
+
+dijkstra-graph.hpp
+==================
+
+Dijkstra graph instance structure (and implementation).
+
+
+
+dijkstra-graph-gen.hpp
+======================
+
+Dijkstra graph instance generator. Contains functions to build graphs and
+serialize the instances for later deserialization. Apparently, building
+the graphs is the most time-consuming part of the tests.
+
+Note: Use dijkstra.cpp to actually generate graphs
+
+
+
+  ==============
+ // PROGRAMS //
+==============
+
+
+main.cpp
+========
+
+VERY simple (and not stressy enough) test driver that allows for switching
+between FibHeap and BinHeap on compile-time (lines 11 and 12).
+
+To compile:
+    clang++ -o main main.cpp
+
+To run:
+    ./main
+
+
+
+dijkstra.cpp
+============
+
+The main program for building graphs and running Dijkstra's algorithm on
+them. Has quite a few flags for configuring the generated instances, and
+supports .dot files and printing the final matrix to stdout.
+
+Switch between FibHeap and BinHeap on compile-time (lines 230 and 231).
+
+To compile:
+    clang++ -o dijkstra dijkstra.cpp
+
+To run:
+    ./dijkstra --help
