@@ -100,6 +100,10 @@ bool RBTree::remove(RBTreeNode *z) {
 		remove_fixup(x);
 	}
 
+	if (root == sentinel) {
+		root = nullptr;
+	}
+
 	return true;
 }
 
@@ -338,7 +342,7 @@ bool RBTree::validate() {
 	}
 
 	// 5. For each node, all simple paths from the node 
-	//    to descendant leaves conteain the same number of black nodes.
+	//    to descendant leaves contain the same number of black nodes.
 	if (check5aux(root) == -1) {
 		cout << "Property 5 violated" << endl;
 		return false;
