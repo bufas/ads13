@@ -19,8 +19,12 @@ template<typename T> class VebTreeLeaf;
 
 template<typename T> class VebNode;
 template<typename T> class VebHeap;
-template<typename T>
 
+/**
+ * Internal node used by the vEB heap implementation.
+ * Location due to template retardation...
+ */
+template<typename T>
 class VebNode : public Node<T> {
     public:
         VebNode(const int key, const T value) : key_(key), value_(value) {
@@ -301,11 +305,6 @@ class VebTreeNode : public VebTree<T> {
         VebTree<int> *summary_;
         VebTree<T> **cluster_;
 };
-
-/**
- * Internal node used by the vEB heap implementation.
- */
-
 
 /**
  * vEB heap wrapper declaration
