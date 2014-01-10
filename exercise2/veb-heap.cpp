@@ -154,6 +154,14 @@ class VebTreeLeaf : public VebTree<T> {
         std::vector<VebNode<T>*> nodes_[2];
 };
 
+template<typename T>
+VebTree<T>* makeTree(int sqrtu) {
+    if (sqrtu <= 2) {
+        return new VebTreeLeaf<T>();
+    }
+    return new VebTreeNode<T>(sqrtu);
+}
+
 // u > 2
 template<typename T>
 class VebTreeNode : public VebTree<T> {
@@ -164,18 +172,10 @@ class VebTreeNode : public VebTree<T> {
                 sqrtu_ *= 2;
             }
 
-            if (sqrtu_ == 2) {
-                // summary_ = new VebTreeLeaf<T>();
-                summary_ = new VebTreeLeaf<int>();
-                cluster_ = new VebTree<T>*[2];
-                cluster_[0] = new VebTreeLeaf<T>();
-                cluster_[1] = new VebTreeLeaf<T>();
-            } else {
-                summary_ = NULL;
-                cluster_ = new VebTree<T>*[sqrtu_];
-                for (int i = 0; i < sqrtu_; i++) {
-                    cluster_[i] = NULL;
-                }
+            summary_ = NULL;
+            cluster_ = new VebTree<T>*[sqrtu_];
+            for (int i = 0; i < sqrtu_; i++) {
+                cluster_[i] = NULL;
             }
         }
 
@@ -196,14 +196,12 @@ class VebTreeNode : public VebTree<T> {
             int b = i % sqrtu_;
 
             if (cluster_[a] == NULL) {
-                cluster_[a] = new VebTreeNode<T>(sqrtu_);
+                cluster_[a] = makeTree<T>(sqrtu_);
             }
             if (cluster_[a]->size() == 0) {
                 if (summary_ == NULL) {
-                    // summary_ = new VebTreeNode<T>(sqrtu_);
-                    summary_ = new VebTreeNode<int>(sqrtu_);
+                    summary_ = makeTree<int>(sqrtu_);
                 }
-                // summary_->insert(a, n);
                 summary_->insert(a, new VebNode<int>(n->getKey(), a));
             }
             cluster_[a]->insert(b, n);
