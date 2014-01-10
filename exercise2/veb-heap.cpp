@@ -19,6 +19,30 @@ template<typename T> class VebTreeLeaf;
 
 template<typename T> class VebNode;
 template<typename T> class VebHeap;
+template<typename T>
+
+class VebNode : public Node<T> {
+    public:
+        VebNode(const int key, const T value) : key_(key), value_(value) {
+        }
+
+        ~VebNode() {
+        }
+
+        int getKey() {
+            return key_;
+        }
+
+        T getValue() {
+            return value_;
+        }
+
+        friend class VebHeap<T>;
+
+    private:
+        int key_;
+        const T value_;
+};
 
 /**
  * vEB tree implementation
@@ -33,6 +57,7 @@ class VebTree {
         virtual VebNode<T>* get(int) = 0;
         virtual VebNode<T>* findMin() = 0;
         virtual VebNode<T>* deleteMin() = 0;
+        virtual VebNode<T>* predecessor(int) = 0;
 
         virtual int size() = 0;
         virtual int max() = 0;
@@ -114,6 +139,13 @@ class VebTreeLeaf : public VebTree<T> {
             return min_;
         }
 
+        VebNode<T>* predecessor(int key) {
+            if (key == 1 && !nodes_[0].empty()) {
+                return nodes_[0].front();
+            }
+            return NULL;
+        }
+
     private:
         int size_;
         int max_;
@@ -133,7 +165,8 @@ class VebTreeNode : public VebTree<T> {
             }
 
             if (sqrtu_ == 2) {
-                summary_ = new VebTreeLeaf<T>();
+                // summary_ = new VebTreeLeaf<T>();
+                summary_ = new VebTreeLeaf<int>();
                 cluster_ = new VebTree<T>*[2];
                 cluster_[0] = new VebTreeLeaf<T>();
                 cluster_[1] = new VebTreeLeaf<T>();
@@ -167,9 +200,11 @@ class VebTreeNode : public VebTree<T> {
             }
             if (cluster_[a]->size() == 0) {
                 if (summary_ == NULL) {
-                    summary_ = new VebTreeNode<T>(sqrtu_);
+                    // summary_ = new VebTreeNode<T>(sqrtu_);
+                    summary_ = new VebTreeNode<int>(sqrtu_);
                 }
-                summary_->insert(a, n);
+                // summary_->insert(a, n);
+                summary_->insert(a, new VebNode<int>(n->getKey(), a));
             }
             cluster_[a]->insert(b, n);
 
@@ -238,6 +273,24 @@ class VebTreeNode : public VebTree<T> {
             return min_;
         }
 
+        VebNode<T>* predecessor(int i) {
+            if (i <= min_) return NULL;
+            if (i > max_)  return get(max_);
+
+            int a = i / sqrtu_;
+            int b = i % sqrtu_;
+
+            if (cluster_[a] != NULL && b > cluster_[a]->min()) {
+                return cluster_[a]->predecessor(b);
+            }
+            
+            VebNode<int> *cn = summary_->predecessor(a);
+            if (cn == NULL) return NULL;
+
+            int c = cn->getValue();
+            return cluster_[c]->get(cluster_[c]->max());
+        }
+
     private:
         int u_;
         int sqrtu_;
@@ -246,36 +299,14 @@ class VebTreeNode : public VebTree<T> {
         int max_;
         int min_;
 
-        VebTree<T> *summary_;
+        //VebTree<T> *summary_;
+        VebTree<int> *summary_;
         VebTree<T> **cluster_;
 };
 
 /**
  * Internal node used by the vEB heap implementation.
  */
-template<typename T>
-class VebNode : public Node<T> {
-    public:
-        VebNode(const int key, const T value) : key_(key), value_(value) {
-        }
-
-        ~VebNode() {
-        }
-
-        int getKey() {
-            return key_;
-        }
-
-        T getValue() {
-            return value_;
-        }
-
-        friend class VebHeap<T>;
-
-    private:
-        int key_;
-        const T value_;
-};
 
 
 /**
