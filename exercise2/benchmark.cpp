@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cstdio>
 
-#include "RBTreeNode.h"
+#include "veb-heap.cpp"
 
 using namespace std;
 
@@ -21,37 +21,40 @@ void benchmark_rb() {
 
 	// Benchmark RB trees and RB trees
 	int max_number_size = 15000000;
+	int size = 10000000;
 
 /*
-	cout << "Timing RB trees sequential insertion" << std::endl;
+	cout << "Timing vEB trees sequential insertion" << std::endl;
 	{
-		RBTree t = RBTree();
+		VebTreeNode<int> t(size);
 		
 		for (int i = 0; i <= max_number_size; i++) {
 			if (i % 100000 == 0) {
 				int rands[1000];
 				for (int q = 0; q < 1000; q++) {
-					rands[q] = rand() % max_number_size;
+					rands[q] = rand() % size;
 				}
 				gettimeofday(&before, nullptr);
 				for (int j = 0; j < 1000; j++, i++) {
-					t.insert(rands[j]);
+					int key = rands[j];
+					t.insert(key, new VebNode<int>(key, key));
 				}
 				gettimeofday(&after, nullptr);
-				print_time("RB insert", i-1000, before, after);
+				print_time("vEB insert", i-1000, before, after);
 			}
-			t.insert(rand() % max_number_size);
+			int key = rand() % size;
+			t.insert(key, new VebNode<int>(key, key));
 		}
 	}
 */
 /*
-	cout << "Timing RB trees predecessor search" << std::endl;
+	cout << "Timing vEB trees predecessor search" << std::endl;
 	{
-		RBTree t = RBTree();
-		vector<RBTreeNode*> nodes;
+		VebTreeNode<int> t(size);
+		vector<VebNode<int>*> nodes;
 		for (int i = 0; i <= max_number_size; i++) {
 			if (i % 100000 == 0 && i != 0) {
-				int number_of_searches = 1000000;
+				int number_of_searches = 1000;
 				// generate 10.000 random numbers to search for
 				int rands[number_of_searches];
 				for (int q = 0; q < number_of_searches; q++) {
@@ -61,41 +64,47 @@ void benchmark_rb() {
 				gettimeofday(&before, nullptr);
 				// Make 10.000 predecessor searches
 				for (int q = 0; q < number_of_searches; q++) {
-					t.predecessor(nodes[rands[q]]);
+					t.predecessor(nodes[rands[q]]->getKey());
 				}
 				gettimeofday(&after, nullptr);
-				print_time("RB pred", i, before, after);
+				print_time("vEB pred", i, before, after);
 			}
-			nodes.push_back(t.insert(rand() % max_number_size));
+			int key = rand() % size;
+			VebNode<int> *n = new VebNode<int>(key, key);
+			t.insert(key, n);
+			nodes.push_back(n);
 		}
 	}
 */
-	cout << "Timing RB trees delete" << std::endl;
+	cout << "Timing vEB trees delete" << std::endl;
 	{
-		RBTree t;
+		VebTreeNode<int> t(size);
 		vector<int> nodes;
 		for (int i = 0; i <= max_number_size; i++) {
 			if (i % 100000 == 0 && i != 0) {
 				gettimeofday(&before, nullptr);
 				for (int q = 0; q < 1000; q++) {
-					t.remove(nodes.back());
+					delete t.remove(nodes.back());
 					nodes.pop_back();
 				}
 				gettimeofday(&after, nullptr);
-				print_time("RB delete", i, before, after);
+				print_time("vEB delete", i, before, after);
 
 				for (int q = 0; q < 1000; q++) {
-					nodes.push_back(t.insert(rand() % max_number_size)->value);
+					int key = rand() % size;
+					t.insert(key, new VebNode<int>(key, key));
+					nodes.push_back(key);
 				}
 			}
-			nodes.push_back(t.insert(rand() % max_number_size)->value);
+			int key = rand() % size;
+			t.insert(key, new VebNode<int>(key, key));
+			nodes.push_back(key);
 		}
 	}
-
+	
 }
 
 int main() {
 	benchmark_rb();
 	return 0;
 }
-

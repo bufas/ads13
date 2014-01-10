@@ -61,7 +61,7 @@ class VebTree {
         virtual VebNode<T>* get(int) = 0;
         virtual VebNode<T>* findMin() = 0;
         virtual VebNode<T>* deleteMin() = 0;
-        virtual VebNode<T>* predecessor(int) = 0;
+        virtual int predecessor(int) = 0;
 
         virtual int size() = 0;
         virtual int max() = 0;
@@ -143,12 +143,20 @@ class VebTreeLeaf : public VebTree<T> {
             return min_;
         }
 
+        int predecessor(int key) {
+            if (key == 1 && !nodes_[0].empty()) {
+                return 0;
+            }
+            return -1;
+        }
+/*
         VebNode<T>* predecessor(int key) {
             if (key == 1 && !nodes_[0].empty()) {
                 return nodes_[0].front();
             }
             return NULL;
         }
+*/
 
     private:
         int size_;
@@ -206,7 +214,7 @@ class VebTreeNode : public VebTree<T> {
                 if (summary_ == NULL) {
                     summary_ = makeTree<int>(sqrtu_);
                 }
-                summary_->insert(a, new VebNode<int>(n->getKey(), a));
+                summary_->insert(a, NULL);
             }
             cluster_[a]->insert(b, n);
 
@@ -274,7 +282,7 @@ class VebTreeNode : public VebTree<T> {
         int min() {
             return min_;
         }
-
+/*
         VebNode<T>* predecessor(int i) {
             if (i <= min_) return NULL;
             if (i > max_)  return get(max_);
@@ -291,6 +299,21 @@ class VebTreeNode : public VebTree<T> {
 
             int c = cn->getValue();
             return cluster_[c]->get(cluster_[c]->max());
+        }*/
+
+        int predecessor(int i) {
+            if (i <= min_) return -1;
+            if (i > max_)  return max_;
+
+            int a = i / sqrtu_;
+            int b = i % sqrtu_;
+
+            if (cluster_[a] != NULL && b > cluster_[a]->min()) {
+                return (a * sqrtu_) + cluster_[a]->predecessor(b);
+            }
+            
+            int c = summary_->predecessor(a);
+            return (c == -1) ? -1 : (c * sqrtu_) + cluster_[c]->max();
         }
 
     private:

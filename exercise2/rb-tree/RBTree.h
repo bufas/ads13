@@ -14,10 +14,12 @@ class RBTree {
 		~RBTree();
 
 		RBTreeNode* insert(int value);
+		bool remove(int key);
 		bool remove(RBTreeNode *z);
 		RBTreeNode* predecessor(RBTreeNode *z);
 		void remove_min();
 		RBTreeNode* find_min();
+		RBTreeNode* get(int key);
 
 		void print();
 		bool validate();

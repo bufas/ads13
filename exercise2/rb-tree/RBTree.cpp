@@ -18,6 +18,14 @@ RBTree::~RBTree() {
 	delete sentinel;
 }
 
+RBTreeNode* RBTree::get(int key) {
+	RBTreeNode *x = root;
+	while (x->value != key && x != sentinel) {
+		x = (key > x->value) ? x->right : x->left;
+	}
+	return x;
+}
+
 RBTreeNode* RBTree::insert(int value) {
 	RBTreeNode *y = sentinel;
 	RBTreeNode *x = (root == nullptr) ? sentinel : root; // Special case when tree is empty
@@ -66,6 +74,10 @@ RBTreeNode* RBTree::find_min() {
 
 void RBTree::remove_min() {
 	remove(subtree_minimum(root));
+}
+
+bool RBTree::remove(int key) {
+	return remove(get(key));
 }
 
 bool RBTree::remove(RBTreeNode *z) {
