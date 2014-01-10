@@ -6,7 +6,7 @@ class RBTreeNode;
 class RBTree {
 
 	public:
-		
+
 		RBTreeNode *root;
 		RBTreeNode *sentinel;
 

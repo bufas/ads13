@@ -1,4 +1,4 @@
-
+#include <iostream>
 #include "RBTreeNode.h"
 
 RBTreeNode::RBTreeNode(RBTreeNode *p, RBTreeNode *l, RBTreeNode *r, int v, bool sentinel) 

@@ -21,6 +21,7 @@ using std::ofstream;
 using std::ostringstream;
 
 const int MAX_DIST = 9;
+bool verbose;
 
 std::ostream& operator<<(std::ostream &out, const GraphNode &n) {
     //string s("GraphNode[");
@@ -130,13 +131,13 @@ Graph getGraph(int argc, const char *argv[]) {
     const char *opt_file = getOption(argc, argv, "-f", "--file");
 
     if (opt_file != NULL) {
-        cout << "Loading graph from file " << opt_file << "... " << endl;
+        if (verbose) cout << "Loading graph from file " << opt_file << "... " << endl;
 
         // Load the graph
         clock_t begin = clock();
         Graph g = deserialize(string(opt_file));
         clock_t end = clock();
-        cout << "Load time: " << double(end-begin)/CLOCKS_PER_SEC << endl;
+        if (verbose) cout << "Load time: " << double(end-begin)/CLOCKS_PER_SEC << endl;
         return g;
     } else {
         // Seed flag, e.g. --seed 50
@@ -159,18 +160,18 @@ Graph getGraph(int argc, const char *argv[]) {
         }
 
         // Info!
-        cout << "Generating graph; size: " << size << ", density: " << ((density * 100l) / max_density) << "%, seed: " << seed << endl;
+        if (verbose) cout << "Generating graph; size: " << size << ", density: " << ((density * 100l) / max_density) << "%, seed: " << seed << endl;
 
         // Build the graph
         clock_t begin = clock();
         Graph g = buildRandomMatrix(size, density, MAX_DIST);
         clock_t end = clock();
-        cout << "Build time: " << double(end-begin)/CLOCKS_PER_SEC << endl;
+        if (verbose) cout << "Build time: " << double(end-begin)/CLOCKS_PER_SEC << endl;
 
         // Output flag, e.g. --output bob.graph
         const char *opt_out = getOption(argc, argv, "-o", "--output");
         if (opt_out != NULL) {
-            cout << "Saving graph to file " << opt_out << "..." << endl;
+            if (verbose) cout << "Saving graph to file " << opt_out << "..." << endl;
             serialize(g, string(opt_out));
         }
         return g;
@@ -212,6 +213,9 @@ int main(int argc, const char *argv[]) {
         return 0;
     }
 
+    // Verbose flag, --verbose
+    verbose = hasOption(argc, argv, "--verbose");
+
     // The graph object
     Graph g = getGraph(argc, argv);
 
@@ -226,13 +230,13 @@ int main(int argc, const char *argv[]) {
     Heap<GraphNode*> *h;
     if (impl != NULL && strcmp(impl, "fib") == 0) {
         h = new FibHeap<GraphNode*>;
-        cout << "FibHeap" << endl;
+        if (verbose) cout << "FibHeap" << endl;
     } else if (impl != NULL && strcmp(impl, "veb") == 0) {
         h = new VebHeap<GraphNode*>(g.size_ * 10);
-        cout << "VebHeap" << endl;
+        if (verbose) cout << "VebHeap" << endl;
     } else {
         h = new BinHeap<GraphNode*>;
-        cout << "BinHeap" << endl;
+        if (verbose) cout << "BinHeap" << endl;
     }
 
     // If we want it dotted
@@ -249,8 +253,11 @@ int main(int argc, const char *argv[]) {
     clock_t begin = clock();
     dijkstra(&g, 0, h);
     clock_t end = clock();
-    cout << "Dijkstra time: " << double(end-begin)/CLOCKS_PER_SEC << endl; 
-
+    if (verbose) {
+        cout << "Dijkstra time: " << double(end-begin)/CLOCKS_PER_SEC << endl; 
+    } else {
+        cout << double(end-begin) / CLOCKS_PER_SEC * 1000 << endl;
+    }
     // If we want the end result printed
     if (print) {
         cout << g << endl;
