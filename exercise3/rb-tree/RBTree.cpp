@@ -8,31 +8,31 @@ using namespace std;
 template<typename T>
 RBTreeNode<T>* RBTree<T>::get(int key) {
 	RBTreeNode<T> *x = root;
-	while (x->value != key && x != sentinel) {
-		x = (key > x->value) ? x->right : x->left;
+	while (x->key != key && x != sentinel) {
+		x = (key > x->key) ? x->right : x->left;
 	}
 	return x;
 }
 
 template<typename T>
-RBTreeNode<T>* RBTree<T>::insert(int value) {
+RBTreeNode<T>* RBTree<T>::insert(int key, T value) {
 	RBTreeNode<T> *y = sentinel;
 	RBTreeNode<T> *x = (root == nullptr) ? sentinel : root; // Special case when tree is empty
 
 	while (x != sentinel) {
 		y = x;
-		if (value < x->value) {
+		if (key < x->key) {
 			x = x->left;
 		} else {
 			x = x->right;
 		}
 	}
 
-	RBTreeNode<T> *z = new RBTreeNode<T>(y, sentinel, sentinel, value);
+	RBTreeNode<T> *z = new RBTreeNode<T>(y, sentinel, sentinel, key, value);
 
 	if (y == sentinel) {
 		root = z;
-	} else if (value < y->value) {
+	} else if (key < y->key) {
 		y->left = z;
 	} else {
 		y->right = z;
@@ -195,13 +195,13 @@ void print_aux(RBTreeNode<T> *n, int indent) {
 		return;
 	}
 
-	int p = n->p->value;
-	int l = n->left->value;
-	int r = n->right->value;
+	int p = n->p->key;
+	int l = n->left->key;
+	int r = n->right->key;
 	const char *color = (n->red) ? "RED" : "BLACK";
 
 	cout << setw(indent);
-	printf("%*s%d [p=%d, l=%d, r=%d] %s\n", indent, " ", n->value, p, l, r, color);
+	printf("%*s%d [p=%d, l=%d, r=%d] %s\n", indent, " ", n->key, p, l, r, color);
 
 	print_aux(n->left, indent + 4);
 	print_aux(n->right, indent + 4);

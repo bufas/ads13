@@ -20,7 +20,7 @@ class RBTree {
 			delete sentinel;
 		}
 
-		RBTreeNode<T>* insert(int value);
+		RBTreeNode<T>* insert(int key, T value);
 		bool remove(int key);
 		bool remove(RBTreeNode<T> *z);
 		RBTreeNode<T>* predecessor(RBTreeNode<T> *z);

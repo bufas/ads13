@@ -8,11 +8,12 @@ class RBTreeNode {
 		RBTreeNode<T> *left;
 		RBTreeNode<T> *right;
 		bool red;
-		int value;
+		int key;
 		bool sentinel;
+        T value;
 
-        RBTreeNode<T>(RBTreeNode<T> *p, RBTreeNode<T> *l, RBTreeNode<T> *r, int v, bool sentinel) 
-            : p(p), left(l), right(r), red(true), value(v), sentinel(sentinel) {}
+        RBTreeNode<T>(RBTreeNode<T> *p, RBTreeNode<T> *l, RBTreeNode<T> *r, int k, bool sentinel, T v) 
+            : p(p), left(l), right(r), red(true), key(k), sentinel(sentinel), value(v) {}
 
         ~RBTreeNode<T>() {
             // Delete the children if they do not point to the sentinel
