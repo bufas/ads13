@@ -184,11 +184,21 @@ class VebTreeNode : public VebTree<T> {
                 sqrtu_ *= 2;
             }
 
+            // Sporty
+            summary_ = makeTree<int>(sqrtu_);
+            cluster_ = new VebTree<T>*[sqrtu_];
+            for (int i = 0; i < sqrtu_; i++) {
+                cluster_[i] = makeTree<T>(sqrtu_);
+            }
+
+            // Lazy
+            /*
             summary_ = NULL;
             cluster_ = new VebTree<T>*[sqrtu_];
             for (int i = 0; i < sqrtu_; i++) {
                 cluster_[i] = NULL;
             }
+            */
         }
 
         ~VebTreeNode() {
@@ -207,13 +217,15 @@ class VebTreeNode : public VebTree<T> {
             int a = i / sqrtu_;
             int b = i % sqrtu_;
 
-            if (cluster_[a] == NULL) {
-                cluster_[a] = makeTree<T>(sqrtu_);
-            }
+            // Lazy
+            // if (cluster_[a] == NULL) {
+                // cluster_[a] = makeTree<T>(sqrtu_);
+            // }
             if (cluster_[a]->size() == 0) {
-                if (summary_ == NULL) {
-                    summary_ = makeTree<int>(sqrtu_);
-                }
+                // Lazy
+                // if (summary_ == NULL) {
+                    // summary_ = makeTree<int>(sqrtu_);
+                // }
                 summary_->insert(a, NULL);
             }
             cluster_[a]->insert(b, n);
@@ -229,14 +241,16 @@ class VebTreeNode : public VebTree<T> {
 
             VebNode<T> *n = cluster_[a]->remove(b);
             if (cluster_[a]->size() == 0) {
-                delete cluster_[a];
-                cluster_[a] = NULL;
+                // Lazy
+                // delete cluster_[a];
+                // cluster_[a] = NULL;
 
                 summary_->remove(a);
-                if (summary_->size() == 0) {
-                    delete summary_;
-                    summary_ = NULL;
-                }
+                // Lazy
+                // if (summary_->size() == 0) {
+                    // delete summary_;
+                    // summary_ = NULL;
+                // }
             }
 
             size_ -= 1;
@@ -308,7 +322,9 @@ class VebTreeNode : public VebTree<T> {
             int a = i / sqrtu_;
             int b = i % sqrtu_;
 
-            if (cluster_[a] != NULL && b > cluster_[a]->min()) {
+            // Lazy
+            // if (cluster_[a] != NULL && b > cluster_[a]->min()) {
+            if (b > cluster_[a]->min()) {
                 return (a * sqrtu_) + cluster_[a]->predecessor(b);
             }
             
