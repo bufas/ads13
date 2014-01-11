@@ -28,7 +28,7 @@ RBTreeNode<T>* RBTree<T>::insert(int key, T value) {
 		}
 	}
 
-	RBTreeNode<T> *z = new RBTreeNode<T>(y, sentinel, sentinel, key, value);
+	RBTreeNode<T> *z = new RBTreeNode<T>(y, sentinel, sentinel, key, false, value);
 
 	if (y == sentinel) {
 		root = z;

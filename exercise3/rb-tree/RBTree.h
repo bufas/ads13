@@ -11,7 +11,7 @@ class RBTree {
 		RBTreeNode<T> *sentinel;
 
 		RBTree<T>() : root(nullptr) {
-			sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true);
+			sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true, nullptr);
 			sentinel->red = false;
 		}
 
