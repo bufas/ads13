@@ -10,6 +10,11 @@ class RBTree {
 		RBTreeNode<T> *root;
 		RBTreeNode<T> *sentinel;
 
+		// RBTree<T>(T dummy) : root(nullptr) {
+		// 	sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true, dummy);
+		// 	sentinel->red = false;
+		// }
+
 		RBTree<T>() : root(nullptr) {
 			sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true, nullptr);
 			sentinel->red = false;
@@ -20,7 +25,7 @@ class RBTree {
 			delete sentinel;
 		}
 
-		RBTreeNode<T>* insert(int key, T value);
+		RBTreeNode<T>* insert(int key, T *value);
 		bool remove(int key);
 		bool remove(RBTreeNode<T> *z);
 		RBTreeNode<T>* predecessor(RBTreeNode<T> *z);

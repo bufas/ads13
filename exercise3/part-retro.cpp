@@ -1,20 +1,47 @@
-#pragma once
-
+#include <utility>
 #include "retro.h"
 
-template<typename T>
-class PartRetro : public Retro<T> {
+using std::pair;
+
+class PartRetro : public Retro {
     
     public:
 
-        void Insert(int t, Op o, T value) {
+    	RBTree<pair<Op, int>> *timeline;
+    	RBTree<int> *tree; // The type parameter is never used
 
+    	PartRetro() 
+    		: timeline(new RBTree<pair<Op, int>>), tree(new RBTree<int>) {}
+
+        void Insert(int t, Op o, int key) {
+        	timeline->insert(t, new pair<Op, int>(o, key));
+
+        	switch (o) {
+        		case INSERT:
+        			tree->insert(key, nullptr);
+        			break;
+        		case DELETE:
+        			tree->remove(key);
+        			break;
+        	}
         }
+
         void Delete(int t) {
+        	pair<Op, int> *p = timeline->get(t)->value;
 
+        	switch (p->first) {
+        		case INSERT:
+        			tree->remove(p->second);
+        			break;
+        		case DELETE:
+        			tree->insert(p->second, nullptr);
+        			break;
+        	}
+
+        	timeline->remove(t);
         }
 
-        RBTreeNode<T>* Query(int x) {
+        RBTreeNode<int>* Query(int x) {
             return nullptr;
         }
 

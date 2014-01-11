@@ -1,17 +1,16 @@
 #pragma once
 
-#include "RBTreeNode.h"
+#include "rb-tree/RBTree.h"
 
 enum Op { INSERT, DELETE };
 
-template<typename T>
 class Retro {
 
     public:
         virtual ~Retro() {};
 
-        virtual void Insert(int t, Op o, T value);
+        virtual void Insert(int t, Op o, int key);
         virtual void Delete(int t);
-        virtual RBTreeNode<T>* Query(int x);
+        virtual RBTreeNode<int>* Query(int x);
 
 };

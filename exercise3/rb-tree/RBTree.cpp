@@ -15,7 +15,7 @@ RBTreeNode<T>* RBTree<T>::get(int key) {
 }
 
 template<typename T>
-RBTreeNode<T>* RBTree<T>::insert(int key, T value) {
+RBTreeNode<T>* RBTree<T>::insert(int key, T *value) {
 	RBTreeNode<T> *y = sentinel;
 	RBTreeNode<T> *x = (root == nullptr) ? sentinel : root; // Special case when tree is empty
 
