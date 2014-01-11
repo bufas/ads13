@@ -2,35 +2,42 @@
 
 #include "RBTreeNode.h"
 
-class RBTreeNode;
+template<typename T>
 class RBTree {
 
 	public:
 
-		RBTreeNode *root;
-		RBTreeNode *sentinel;
+		RBTreeNode<T> *root;
+		RBTreeNode<T> *sentinel;
 
-		RBTree();
-		~RBTree();
+		RBTree<T>() : root(nullptr) {
+			sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true);
+			sentinel->red = false;
+		}
 
-		RBTreeNode* insert(int value);
+		~RBTree<T>() {
+			delete root;
+			delete sentinel;
+		}
+
+		RBTreeNode<T>* insert(int value);
 		bool remove(int key);
-		bool remove(RBTreeNode *z);
-		RBTreeNode* predecessor(RBTreeNode *z);
+		bool remove(RBTreeNode<T> *z);
+		RBTreeNode<T>* predecessor(RBTreeNode<T> *z);
 		void remove_min();
-		RBTreeNode* find_min();
-		RBTreeNode* get(int key);
+		RBTreeNode<T>* find_min();
+		RBTreeNode<T>* get(int key);
 
 		void print();
 		bool validate();
 
 //	private:
 
-		void insert_fixup(RBTreeNode *z);
-		void remove_fixup(RBTreeNode *x);
-		void transplant(RBTreeNode *u, RBTreeNode *v);
+		void insert_fixup(RBTreeNode<T> *z);
+		void remove_fixup(RBTreeNode<T> *x);
+		void transplant(RBTreeNode<T> *u, RBTreeNode<T> *v);
 
-		void rotate_left(RBTreeNode *x);
-		void rotate_right(RBTreeNode *x);
+		void rotate_left(RBTreeNode<T> *x);
+		void rotate_right(RBTreeNode<T> *x);
 
 };

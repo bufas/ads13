@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <iostream>
 #include <iomanip>
@@ -6,29 +5,19 @@
 
 using namespace std;
 
-RBTree::RBTree() : root(nullptr) {
-	sentinel = new RBTreeNode(nullptr, nullptr, nullptr, 0, true);
-	sentinel->red = false;
-	// TODO should the sentinel be its own parent?
-	// TODO should the sentinel be its own children?
-}
-
-RBTree::~RBTree() {
-	delete root;
-	delete sentinel;
-}
-
-RBTreeNode* RBTree::get(int key) {
-	RBTreeNode *x = root;
+template<typename T>
+RBTreeNode<T>* RBTree<T>::get(int key) {
+	RBTreeNode<T> *x = root;
 	while (x->value != key && x != sentinel) {
 		x = (key > x->value) ? x->right : x->left;
 	}
 	return x;
 }
 
-RBTreeNode* RBTree::insert(int value) {
-	RBTreeNode *y = sentinel;
-	RBTreeNode *x = (root == nullptr) ? sentinel : root; // Special case when tree is empty
+template<typename T>
+RBTreeNode<T>* RBTree<T>::insert(int value) {
+	RBTreeNode<T> *y = sentinel;
+	RBTreeNode<T> *x = (root == nullptr) ? sentinel : root; // Special case when tree is empty
 
 	while (x != sentinel) {
 		y = x;
@@ -39,7 +28,7 @@ RBTreeNode* RBTree::insert(int value) {
 		}
 	}
 
-	RBTreeNode *z = new RBTreeNode(y, sentinel, sentinel, value);
+	RBTreeNode<T> *z = new RBTreeNode<T>(y, sentinel, sentinel, value);
 
 	if (y == sentinel) {
 		root = z;
@@ -54,36 +43,42 @@ RBTreeNode* RBTree::insert(int value) {
 	return z;
 }
 
-RBTreeNode* subtree_minimum(RBTreeNode *x) {
+template<typename T>
+RBTreeNode<T>* subtree_minimum(RBTreeNode<T> *x) {
 	while (!x->left->sentinel) {
 		x = x->left;
 	}
 	return x;
 }
 
-RBTreeNode* subtree_maximum(RBTreeNode *x) {
+template<typename T>
+RBTreeNode<T>* subtree_maximum(RBTreeNode<T> *x) {
 	while (!x->right->sentinel) {
 		x = x->right;
 	}
 	return x;
 }
 
-RBTreeNode* RBTree::find_min() {
+template<typename T>
+RBTreeNode<T>* RBTree<T>::find_min() {
 	return subtree_minimum(root);
 }
 
-void RBTree::remove_min() {
+template<typename T>
+void RBTree<T>::remove_min() {
 	remove(subtree_minimum(root));
 }
 
-bool RBTree::remove(int key) {
+template<typename T>
+bool RBTree<T>::remove(int key) {
 	return remove(get(key));
 }
 
-bool RBTree::remove(RBTreeNode *z) {
-	RBTreeNode *x;
+template<typename T>
+bool RBTree<T>::remove(RBTreeNode<T> *z) {
+	RBTreeNode<T> *x;
 
-	RBTreeNode *y = z;
+	RBTreeNode<T> *y = z;
 	bool y_original_red = y->red;
 	
 	if (z->left == sentinel) {
@@ -119,10 +114,11 @@ bool RBTree::remove(RBTreeNode *z) {
 	return true;
 }
 
-void RBTree::remove_fixup(RBTreeNode *x) {
+template<typename T>
+void RBTree<T>::remove_fixup(RBTreeNode<T> *x) {
 	while(x != root && !x->red) {
 		if (x == x->p->left) {
-			RBTreeNode *w = x->p->right;
+			RBTreeNode<T> *w = x->p->right;
 			if (w->red) {
 				w->red = false;
 				x->p->red = true;
@@ -146,7 +142,7 @@ void RBTree::remove_fixup(RBTreeNode *x) {
 				x = root;
 			}
 		} else {
-			RBTreeNode *w = x->p->left;
+			RBTreeNode<T> *w = x->p->left;
 			if (w->red) {
 				w->red = false;
 				x->p->red = true;
@@ -175,14 +171,15 @@ void RBTree::remove_fixup(RBTreeNode *x) {
 	x->red = false;
 }
 
-RBTreeNode* RBTree::predecessor(RBTreeNode *z) {
+template<typename T>
+RBTreeNode<T>* RBTree<T>::predecessor(RBTreeNode<T> *z) {
 	// If z has a left child, its predecessor is the max node in that subtree
 	if (z->left != sentinel) {
 		return subtree_maximum(z->left);
 	}
 
 	// If z does not have a left child, its predecessor is its first left ancestor
-	RBTreeNode *res = z->p;
+	RBTreeNode<T> *res = z->p;
 	while (res != sentinel && z != res->right) {
 		z = res;
 		res = res->p;
@@ -190,7 +187,8 @@ RBTreeNode* RBTree::predecessor(RBTreeNode *z) {
 	return (res == sentinel) ? nullptr : res;
 }
 
-void print_aux(RBTreeNode *n, int indent) {
+template<typename T>
+void print_aux(RBTreeNode<T> *n, int indent) {
 	// Print sentinel, much special, wow, so amaze
 	if (n->sentinel) {
 		//printf("%*sNIL\n", indent, " ");
@@ -209,14 +207,16 @@ void print_aux(RBTreeNode *n, int indent) {
 	print_aux(n->right, indent + 4);
 }
 
-void RBTree::print() {
+template<typename T>
+void RBTree<T>::print() {
 	cout << endl << "=============================\nPrinting tree\n=============================" << endl;
 	print_aux(root, 0);
 	cout << endl << endl;
 }
 
-void RBTree::insert_fixup(RBTreeNode *z) {
-	RBTreeNode *y;
+template<typename T>
+void RBTree<T>::insert_fixup(RBTreeNode<T> *z) {
+	RBTreeNode<T> *y;
 	while (z->p->red) {
 		if (z->p == z->p->p->left) {
 			y = z->p->p->right;
@@ -257,8 +257,9 @@ void RBTree::insert_fixup(RBTreeNode *z) {
 	root->red = false;
 }
 
-void RBTree::rotate_left(RBTreeNode *x) {
-	RBTreeNode *y = x->right;
+template<typename T>
+void RBTree<T>::rotate_left(RBTreeNode<T> *x) {
+	RBTreeNode<T> *y = x->right;
 	
 	// Turn y's left subtree into x's right subtree
 	x->right = y->left;
@@ -275,8 +276,9 @@ void RBTree::rotate_left(RBTreeNode *x) {
 	x->p = y;
 };
 
-void RBTree::rotate_right(RBTreeNode *y) {
-	RBTreeNode *x = y->left;
+template<typename T>
+void RBTree<T>::rotate_right(RBTreeNode<T> *y) {
+	RBTreeNode<T> *x = y->left;
 
 	// Turn x's right subtree into y's left subtree
 	y->left = x->right;
@@ -293,7 +295,8 @@ void RBTree::rotate_right(RBTreeNode *y) {
 	y->p = x;
 };
 
-void RBTree::transplant(RBTreeNode *u, RBTreeNode *v) {
+template<typename T>
+void RBTree<T>::transplant(RBTreeNode<T> *u, RBTreeNode<T> *v) {
 	if (u->p == sentinel) {
 		root = v;
 	} else if (u == u->p->left) {
@@ -305,7 +308,8 @@ void RBTree::transplant(RBTreeNode *u, RBTreeNode *v) {
 	v->p = u->p;
 }
 
-bool check4aux(RBTreeNode *n) {
+template<typename T>
+bool check4aux(RBTreeNode<T> *n) {
 	if (n->sentinel) return true;
 	if (n->red && (n->left->red || n->right->red)) return false;
 	return check4aux(n->left) && check4aux(n->right);
@@ -314,7 +318,8 @@ bool check4aux(RBTreeNode *n) {
 // Counts number of black nodes to a leaf
 // Returns the number of black nodes to a leaf, or -1 when different paths
 // has a different number of black nodes
-int check5aux(RBTreeNode *n) {
+template<typename T>
+int check5aux(RBTreeNode<T> *n) {
 	if (n->sentinel) return 1;
 
 	int leftcount  = check5aux(n->left);
@@ -329,7 +334,8 @@ int check5aux(RBTreeNode *n) {
 	}
 }
 
-bool RBTree::validate() {
+template<typename T>
+bool RBTree<T>::validate() {
 	cout << "VALIDATING TREE" << endl;
 
 	// 1. Every node is either red or black
