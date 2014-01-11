@@ -4,9 +4,15 @@ class FullRetro : public Retro {
     
     public:
 
-        void Insert(int t, Op o, int key) {
+        Tree timeline;
+        RBTree<int> tree;
+        RBTree<int> inserts;
 
+        void Insert(int t, Op o, int key) {
+            // Insert into timeline at time t
+            timeline.insert(t, o, key);
         }
+        
         void Delete(int t) {
 
         }

@@ -42,7 +42,7 @@ class PartRetro : public Retro {
         }
 
         RBTreeNode<int>* Query(int x) {
-            return nullptr;
+            return tree->get(x);
         }
 
 };
