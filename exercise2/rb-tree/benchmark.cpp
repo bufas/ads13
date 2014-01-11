@@ -20,7 +20,7 @@ void benchmark_rb() {
 	struct timeval before, after;
 
 	// Benchmark RB trees and RB trees
-	int max_number_size = 15000000;
+	int max_number_size = 50000000;
 
 /*
 	cout << "Timing RB trees sequential insertion" << std::endl;
@@ -44,14 +44,14 @@ void benchmark_rb() {
 		}
 	}
 */
-/*
+
 	cout << "Timing RB trees predecessor search" << std::endl;
 	{
 		RBTree t = RBTree();
 		vector<RBTreeNode*> nodes;
 		for (int i = 0; i <= max_number_size; i++) {
 			if (i % 100000 == 0 && i != 0) {
-				int number_of_searches = 1000000;
+				int number_of_searches = 1000;
 				// generate 10.000 random numbers to search for
 				int rands[number_of_searches];
 				for (int q = 0; q < number_of_searches; q++) {
@@ -69,7 +69,8 @@ void benchmark_rb() {
 			nodes.push_back(t.insert(rand() % max_number_size));
 		}
 	}
-*/
+
+	/*
 	cout << "Timing RB trees delete" << std::endl;
 	{
 		RBTree t;
@@ -91,7 +92,7 @@ void benchmark_rb() {
 			nodes.push_back(t.insert(rand() % max_number_size)->value);
 		}
 	}
-
+*/
 }
 
 int main() {
