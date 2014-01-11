@@ -1,6 +1,6 @@
 set terminal png
 
-set xlabel "Nodes (#)"
+set xlabel "# of nodes"
 set ylabel "Time (ms)"
 
 set output "graph_dens0.png"
