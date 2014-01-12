@@ -28,7 +28,7 @@ class RBTree {
 		RBTreeNode<T>* insert(int key, T *value);
 		bool remove(int key);
 		bool remove(RBTreeNode<T> *z);
-		RBTreeNode<T>* predecessor(RBTreeNode<T> *z);
+		int predecessor(int x);
 		void remove_min();
 		RBTreeNode<T>* find_min();
 		RBTreeNode<T>* get(int key);

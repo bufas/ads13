@@ -172,7 +172,9 @@ void RBTree<T>::remove_fixup(RBTreeNode<T> *x) {
 }
 
 template<typename T>
-RBTreeNode<T>* RBTree<T>::predecessor(RBTreeNode<T> *z) {
+RBTreeNode<T>* RBTree<T>::predecessor(int x) {
+	RBTreeNode<T> *z = get(x);
+
 	// If z has a left child, its predecessor is the max node in that subtree
 	if (z->left != sentinel) {
 		return subtree_maximum(z->left);
@@ -184,7 +186,7 @@ RBTreeNode<T>* RBTree<T>::predecessor(RBTreeNode<T> *z) {
 		z = res;
 		res = res->p;
 	}
-	return (res == sentinel) ? nullptr : res;
+	return (res == sentinel) ? -1 : res->key;
 }
 
 template<typename T>
