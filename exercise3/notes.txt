@@ -72,6 +72,8 @@ Insert(o, x, t)
     delete-del-aux(n, x)     (rename? xD)
   end
 
+  Op.DELETE
+  ---------
   insert-del(x, t)
     n = getNode(t)
     n.insertRightChild()
