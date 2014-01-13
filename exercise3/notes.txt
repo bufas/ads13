@@ -1,0 +1,97 @@
+Query(x, t)
+===========
+Givet en knude, lav pred(x) i DS i alle knuder op til roden.
+Resultatet er min()-funktionen på alle sub-resultater.
+
+n = getNode(t)
+while (n != null)
+  res = min(res, n.pred(x))
+  n = n.parent
+
+
+Delete(t)
+=========
+  Op.DELETE
+  ---------
+  delete-del(t)
+    n = getNode(t)
+    x = n.getValue()   (root i DS, måske?)
+    while n does not contain x
+      n = parent
+    n.remove(x)
+    delete-del-aux(n, x)
+  end
+
+  delete-del-aux(n, x)
+    if n is left child of parent
+      n.remove(x)
+      parent.insert(x)
+    else
+      if sibling contains x
+        sibling.remove(x)
+        remove(x)
+        parent.insert(x)
+      else
+        succ-insert(parent, x)
+    delete-del-aux(parent, x)
+  end
+
+  succ-insert(n, x)
+    while n is not root
+      if n is left child of parent
+        sibling.insert(x)
+      n = parent
+  end
+
+  Op.INSERT
+  ---------
+  delete-ins(t)
+    n = getNode(t)
+    x = n.getValue()
+    while n does not contain x
+      n = n.parent
+    n.remove(x)
+    delete-ins-aux(n, x)
+  end
+
+  delete-ins-aux(n, x)
+    while n is not root
+      if n is left child
+        sibling.delete(x)
+      n = parent
+  end
+
+
+Insert(o, x, t)
+===============
+  Op.INSERT
+  ---------
+  insert-ins(x, t)  
+    n = getNode(t)
+    n.insertLeftChild()
+    delete-del-aux(n, x)     (rename? xD)
+  end
+
+  insert-del(x, t)
+    n = getNode(t)
+    n.insertRightChild()
+    if n is left child
+      n.insert(x)
+      insert-del-aux(parent, x)
+    if n is right child
+      while parent does not contain x
+        n = parent
+      delete-ins-aux(n, x)
+    end
+
+  insert-del-aux(n, x)
+    while parent does not contain x
+      n = parent
+    if n is right child
+      sibling.insert(x)
+      parent.remove(x)
+      delete-ins-aux(parent, x)
+    else
+      parent.remove(x)
+      delete-ins-aux(parent, x) 
+  end
