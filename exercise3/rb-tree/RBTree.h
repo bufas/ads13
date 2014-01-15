@@ -27,6 +27,8 @@ class RBTree {
 		RBTreeNode<T>* get(int key);
 
 		void print();
+		void print_inorder();
+		void inorder(void (*f)(RBTreeNode<T> *n));
 		bool validate();
 
 //	private:

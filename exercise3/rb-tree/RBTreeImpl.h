@@ -220,6 +220,32 @@ void RBTree<T>::print() {
 }
 
 template<typename T>
+void print_inorder_aux(RBTreeNode<T> *n) {
+	cout << n->key;
+}
+
+template<typename T>
+void RBTree<T>::print_inorder() {
+	inorder(print_inorder_aux);
+	cout << endl;
+}
+
+template<typename T>
+void inorder_aux(RBTreeNode<T> *n, void (*f)(RBTreeNode<T> *n)) {
+	if (n == nullptr) return;
+
+	inorder_aux(n->left, f);
+	f(n);
+	inorder_aux(n->right, f);
+}
+
+template<typename T>
+void RBTree<T>::inorder(void (*f)(RBTreeNode<T> *n)) {
+	cout << endl << "=============================[ in-order tree walk ]=============================" << endl;
+	inorder_aux(root, f);
+}
+
+template<typename T>
 void RBTree<T>::insert_fixup(RBTreeNode<T> *z) {
 	RBTreeNode<T> *y;
 	while (z->p != nullptr && z->p->red) {
