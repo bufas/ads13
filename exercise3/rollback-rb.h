@@ -70,36 +70,36 @@ class RollbackRBTree : public Retro {
         }
 
         RBTree<int> rollbackward(int t) {
-            RBTree<int> tree;
+            RBTree<int> result;
             for (int i = ops.size() - 1; i >= t; i--) {
                 pair<Op,int> p = ops[i];
 
                 switch (p.first) {
                     case INSERT:
-                        tree.remove(p.second);
+                        result.remove(p.second);
                         break;
                     case DELETE:
-                        tree.insert(p.second, 0);
+                        result.insert(p.second, 0);
                         break;
                 }
             }
-            return tree;
+            return result;
         }
 
         RBTree<int> rollforward(int t) {
-            RBTree<int> tree;
+            RBTree<int> result;
             for (int i = 0; i < t; i++) {
                 pair<Op,int> p = ops[i];
                 
                 switch (p.first) {
                     case INSERT:
-                        tree.insert(p.second, 0);
+                        result.insert(p.second, 0);
                         break;
                     case DELETE:
-                        tree.remove(p.second);
+                        result.remove(p.second);
                         break;
                 }
             }
-            return tree;
+            return result;
         }
 };
