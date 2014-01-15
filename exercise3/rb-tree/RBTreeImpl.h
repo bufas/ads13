@@ -71,7 +71,8 @@ void RBTree<T>::remove_min() {
 
 template<typename T>
 bool RBTree<T>::remove(int key) {
-	return remove(get(key));
+	RBTreeNode<T> *n = get(key);
+	return remove(n);
 }
 
 template<typename T>
@@ -120,13 +121,15 @@ void RBTree<T>::remove_fixup(RBTreeNode<T> *x) {
 	while(x != root && x != nullptr && !x->red) {
 		if (x == x->p->left) {
 			RBTreeNode<T> *w = x->p->right;
+			if (w == nullptr) return;
+
 			if (w->red) {
 				w->red = false;
 				x->p->red = true;
 				rotate_left(x->p);
 				w = x->p->right;
 			}
-			if (!w->left->red && !w->right->red) {
+			if (w->left != nullptr && !w->left->red && w->right != nullptr && !w->right->red) {
 				w->red = true;
 				x = x->p;
 			} else {
@@ -144,25 +147,31 @@ void RBTree<T>::remove_fixup(RBTreeNode<T> *x) {
 			}
 		} else {
 			RBTreeNode<T> *w = x->p->left;
+			if (w == nullptr) return;
+
 			if (w->red) {
 				w->red = false;
 				x->p->red = true;
 				rotate_right(x->p);
 				w = x->p->left;
 			}
-			if (!w->left->red && !w->right->red) {
+			if (w->left != nullptr && !w->left->red && w->right != nullptr && !w->right->red) {
 				w->red = true;
 				x = x->p;
 			} else {
-				if (!w->left->red) {
-					w->right->red = false;
+				if (w->left != nullptr && !w->left->red) {
+					if (w->right != nullptr) {
+						w->right->red = false;
+					}
 					w->red = true;
 					rotate_left(w);
 					w = x->p->left;
 				}
 				w->red = x->p->red;
 				x->p->red = false;
-				w->left->red = false;
+				if (w->left != nullptr) {
+					w->left->red = false;
+				}
 				rotate_right(x->p);
 				x = root;
 			}
@@ -290,6 +299,10 @@ void RBTree<T>::insert_fixup(RBTreeNode<T> *z) {
 
 template<typename T>
 void RBTree<T>::rotate_left(RBTreeNode<T> *x) {
+	// Bail if we have no y
+	if (x->right == nullptr) {
+		return;
+	}
 	RBTreeNode<T> *y = x->right;
 	
 	// Turn y's left subtree into x's right subtree
