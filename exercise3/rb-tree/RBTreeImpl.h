@@ -111,9 +111,6 @@ bool RBTree<T>::remove(RBTreeNode<T> *z) {
 		remove_fixup(x);
 	}
 
-	// if (root == sentinel) {
-	// 	root = nullptr;
-	// }
 	size--;
 	return true;
 }
@@ -358,6 +355,7 @@ bool RBTree<T>::validate() {
 	}
 
 	// 3. Every leaf (NIL) is black
+	// NOTE: leaves are now nullptr
 	// if (sentinel != nullptr) {
 	// 	cout << "Property 3 violated" << endl;
 	// 	return false;

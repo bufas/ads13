@@ -10,14 +10,7 @@ class RBTree {
 		RBTreeNode<T> *root;
 		int size;
 
-		// RBTree<T>(T dummy) : root(nullptr) {
-		// 	sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true, dummy);
-		// 	sentinel->red = false;
-		// }
-
 		RBTree<T>() : root(nullptr), size(0) {
-			// sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true, nullptr);
-			// sentinel->red = false;
 		}
 
 		~RBTree<T>() {
