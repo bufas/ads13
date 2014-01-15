@@ -14,6 +14,10 @@ class PartRetro : public Retro {
     	PartRetro() 
     		: timeline(new RBTree<pair<Op, int>>), tree(new RBTree<int>) {}
 
+        void Insert(Op o, int key) {
+            Insert(tree->size(), o, key);
+        }
+
         void Insert(int t, Op o, int key) {
         	timeline->insert(t, new pair<Op, int>(o, key));
 
@@ -42,8 +46,12 @@ class PartRetro : public Retro {
         	timeline->remove(t);
         }
 
-        RBTreeNode<int>* Query(int x) {
-            return tree->get(x);
+        int Query(int key) {
+            return Query(0, key);
+        }
+
+        int Query(int t, int key) {
+            return tree->predecessor(key);
         }
 
 };
