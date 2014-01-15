@@ -8,7 +8,7 @@ using namespace std;
 template<typename T>
 RBTreeNode<T>* RBTree<T>::get(int key) {
 	RBTreeNode<T> *x = root;
-	while (x->key != key && x != sentinel) {
+	while (x != nullptr && x->key != key) {
 		x = (key > x->key) ? x->right : x->left;
 	}
 	return x;
@@ -16,10 +16,10 @@ RBTreeNode<T>* RBTree<T>::get(int key) {
 
 template<typename T>
 RBTreeNode<T>* RBTree<T>::insert(int key, T value) {
-	RBTreeNode<T> *y = sentinel;
-	RBTreeNode<T> *x = (root == nullptr) ? sentinel : root; // Special case when tree is empty
+	RBTreeNode<T> *y = nullptr;
+	RBTreeNode<T> *x = root;
 
-	while (x != sentinel) {
+	while (x != nullptr) {
 		y = x;
 		if (key < x->key) {
 			x = x->left;
@@ -28,9 +28,9 @@ RBTreeNode<T>* RBTree<T>::insert(int key, T value) {
 		}
 	}
 
-	RBTreeNode<T> *z = new RBTreeNode<T>(y, sentinel, sentinel, key, false, value);
+	RBTreeNode<T> *z = new RBTreeNode<T>(y, key, value);
 
-	if (y == sentinel) {
+	if (y == nullptr) {
 		root = z;
 	} else if (key < y->key) {
 		y->left = z;
@@ -39,13 +39,13 @@ RBTreeNode<T>* RBTree<T>::insert(int key, T value) {
 	}
 
 	insert_fixup(z);
-
+	size++;
 	return z;
 }
 
 template<typename T>
 RBTreeNode<T>* subtree_minimum(RBTreeNode<T> *x) {
-	while (!x->left->sentinel) {
+	while (x->left != nullptr) {
 		x = x->left;
 	}
 	return x;
@@ -53,7 +53,7 @@ RBTreeNode<T>* subtree_minimum(RBTreeNode<T> *x) {
 
 template<typename T>
 RBTreeNode<T>* subtree_maximum(RBTreeNode<T> *x) {
-	while (!x->right->sentinel) {
+	while (x->right != nullptr) {
 		x = x->right;
 	}
 	return x;
@@ -76,15 +76,19 @@ bool RBTree<T>::remove(int key) {
 
 template<typename T>
 bool RBTree<T>::remove(RBTreeNode<T> *z) {
+	if (z == nullptr) {
+		cout << "null..." << endl;
+		return false;
+	}
 	RBTreeNode<T> *x;
 
 	RBTreeNode<T> *y = z;
 	bool y_original_red = y->red;
 	
-	if (z->left == sentinel) {
+	if (z->left == nullptr) {
 		x = z->right;
 		transplant(z, z->right);
-	} else if (z->right == sentinel) {
+	} else if (z->right == nullptr) {
 		x = z->left;
 		transplant(z, z->left);
 	} else {
@@ -92,7 +96,7 @@ bool RBTree<T>::remove(RBTreeNode<T> *z) {
 		y_original_red = y->red;
 		x = y->right;
 		if (y->p == z) {
-			x->p = y;
+			// x->p = y;
 		} else {
 			transplant(y, y->right);
 			y->right = z->right;
@@ -107,16 +111,16 @@ bool RBTree<T>::remove(RBTreeNode<T> *z) {
 		remove_fixup(x);
 	}
 
-	if (root == sentinel) {
-		root = nullptr;
-	}
-
+	// if (root == sentinel) {
+	// 	root = nullptr;
+	// }
+	size--;
 	return true;
 }
 
 template<typename T>
 void RBTree<T>::remove_fixup(RBTreeNode<T> *x) {
-	while(x != root && !x->red) {
+	while(x != root && x != nullptr && !x->red) {
 		if (x == x->p->left) {
 			RBTreeNode<T> *w = x->p->right;
 			if (w->red) {
@@ -168,7 +172,9 @@ void RBTree<T>::remove_fixup(RBTreeNode<T> *x) {
 		}
 	}
 
-	x->red = false;
+	if (x != nullptr) {
+		x->red = false;
+	}
 }
 
 template<typename T>
@@ -176,23 +182,23 @@ int RBTree<T>::predecessor(int x) {
 	RBTreeNode<T> *z = get(x);
 
 	// If z has a left child, its predecessor is the max node in that subtree
-	if (z->left != sentinel) {
+	if (z->left != nullptr) {
 		return subtree_maximum(z->left)->key;
 	}
 
 	// If z does not have a left child, its predecessor is its first left ancestor
 	RBTreeNode<T> *res = z->p;
-	while (res != sentinel && z != res->right) {
+	while (res != nullptr && z != res->right) {
 		z = res;
 		res = res->p;
 	}
-	return (res == sentinel) ? -1 : res->key;
+	return (res == nullptr) ? -1 : res->key;
 }
 
 template<typename T>
 void print_aux(RBTreeNode<T> *n, int indent) {
 	// Print sentinel, much special, wow, so amaze
-	if (n->sentinel) {
+	if (n == nullptr) {
 		//printf("%*sNIL\n", indent, " ");
 		return;
 	}
@@ -219,10 +225,10 @@ void RBTree<T>::print() {
 template<typename T>
 void RBTree<T>::insert_fixup(RBTreeNode<T> *z) {
 	RBTreeNode<T> *y;
-	while (z->p != sentinel && z->p->red) {
+	while (z->p != nullptr && z->p->red) {
 		if (z->p == z->p->p->left) {
 			y = z->p->p->right;
-			if (y != sentinel && y->red) {
+			if (y != nullptr && y->red) {
 				z->p->red = false;
 				y->red = false;
 				z->p->p->red = true;
@@ -239,7 +245,7 @@ void RBTree<T>::insert_fixup(RBTreeNode<T> *z) {
 		} else {
 			// Same as then case, with left and right swapped
 			y = z->p->p->left;
-			if (y != sentinel && y->red) {
+			if (y != nullptr && y->red) {
 				z->p->red = false;
 				y->red = false;
 				z->p->p->red = true;
@@ -265,13 +271,13 @@ void RBTree<T>::rotate_left(RBTreeNode<T> *x) {
 	
 	// Turn y's left subtree into x's right subtree
 	x->right = y->left;
-	if (y->left != sentinel) y->left->p = x;
+	if (y->left != nullptr) y->left->p = x;
 
 	// Link x's parent to y
 	y->p = x->p;
-	if (x->p == sentinel)      root = y;
+	if (x->p == nullptr)      root = y;
 	else if (x == x->p->left) x->p->left  = y;
-	else                           x->p->right = y;
+	else                      x->p->right = y;
 
 	// Put x on y's left
 	y->left   = x;
@@ -284,13 +290,13 @@ void RBTree<T>::rotate_right(RBTreeNode<T> *y) {
 
 	// Turn x's right subtree into y's left subtree
 	y->left = x->right;
-	if (x->right != sentinel) x->right->p = y;
+	if (x->right != nullptr) x->right->p = y;
 
 	// Link y's parent to x
 	x->p = y->p;
-	if (y->p == sentinel)      root = x;
+	if (y->p == nullptr)      root = x;
 	else if (y == y->p->left) y->p->left  = x;
-	else                           y->p->right = x;
+	else                      y->p->right = x;
 
 	// Put y on x's right
 	x->right  = y;
@@ -299,7 +305,7 @@ void RBTree<T>::rotate_right(RBTreeNode<T> *y) {
 
 template<typename T>
 void RBTree<T>::transplant(RBTreeNode<T> *u, RBTreeNode<T> *v) {
-	if (u->p == sentinel) {
+	if (u->p == nullptr) {
 		root = v;
 	} else if (u == u->p->left) {
 		u->p->left = v;
@@ -307,12 +313,14 @@ void RBTree<T>::transplant(RBTreeNode<T> *u, RBTreeNode<T> *v) {
 		u->p->right = v;
 	}
 
-	v->p = u->p;
+	if (v != nullptr) {
+		v->p = u->p;
+	}
 }
 
 template<typename T>
 bool check4aux(RBTreeNode<T> *n) {
-	if (n == nullptr || n->sentinel) return true;
+	if (n == nullptr) return true;
 	if (n->red && ((n->left != nullptr && n->left->red) || (n->right != nullptr && n->right->red))) return false;
 	return check4aux(n->left) && check4aux(n->right);
 }
@@ -322,7 +330,7 @@ bool check4aux(RBTreeNode<T> *n) {
 // has a different number of black nodes
 template<typename T>
 int check5aux(RBTreeNode<T> *n) {
-	if (n == nullptr || n->sentinel) return 1;
+	if (n == nullptr) return 1;
 
 	int leftcount  = check5aux(n->left);
 	int rightcount = check5aux(n->right);
@@ -350,10 +358,10 @@ bool RBTree<T>::validate() {
 	}
 
 	// 3. Every leaf (NIL) is black
-	if (sentinel != nullptr) {
-		cout << "Property 3 violated" << endl;
-		return false;
-	}
+	// if (sentinel != nullptr) {
+	// 	cout << "Property 3 violated" << endl;
+	// 	return false;
+	// }
 	
 	// 4. If a node is red then both its children are black
 	if (!check4aux(root)) {

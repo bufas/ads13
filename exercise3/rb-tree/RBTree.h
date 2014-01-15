@@ -8,21 +8,21 @@ class RBTree {
 	public:
 
 		RBTreeNode<T> *root;
-		RBTreeNode<T> *sentinel;
+		int size;
 
 		// RBTree<T>(T dummy) : root(nullptr) {
 		// 	sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true, dummy);
 		// 	sentinel->red = false;
 		// }
 
-		RBTree<T>() : root(nullptr), sentinel(nullptr) {
+		RBTree<T>() : root(nullptr), size(0) {
 			// sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true, nullptr);
 			// sentinel->red = false;
 		}
 
 		~RBTree<T>() {
 			delete root;
-			delete sentinel;
+			root = nullptr;
 		}
 
 		RBTreeNode<T>* insert(int key, T value);
