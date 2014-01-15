@@ -12,7 +12,14 @@ int main(int argc, char *argv[]) {
 
     RBTree<int> rbt;
     rbt.insert(1, 0);
-    rbt.insert(4, 0);
+    rbt.insert(2, 0);
+    rbt.insert(1, 0);
+    rbt.insert(1, 0);
+    rbt.insert(1, 0);
+    rbt.insert(1, 0);
     rbt.print();
+    // rbt.insert(1, 0);
+    // rbt.insert(4, 0);
+    // rbt.print();
     return 0;
 }
