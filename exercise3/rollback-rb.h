@@ -56,9 +56,57 @@ class RollbackRBTree : public Retro {
         }
 
         int Query(int t, int key) {
-            return rollback(t).get(key)->key;
+            do_rollback(t);
+            int result = tree.get(key)->key;
+            undo_rollback(t);
+            return result;
         }
 
+        /**
+         * Does a permanent rollback of the data structure, i.e.
+         * reverts all changes until the given time.
+         *
+         * Should be used in pair with undo_rollback(int t) to
+         * undo the revert of changes and bring the data structure
+         * back into a consistent state!
+         */
+        void do_rollback(int t) {
+            // Revert update at time t as well (slide 3)
+            for (int i = ops.size() - 1; i >= t; i--) {
+                pair<Op,int> p = ops[i];
+
+                switch (p.first) {
+                    case INSERT:
+                        tree.remove(p.second);
+                        break;
+                    case DELETE:
+                        tree.insert(p.second, 0);
+                        break;
+                }
+            }
+        }
+
+        /**
+         * Reverts a permanent rollback by undoing the reverts
+         * made by a call to do_rollback(int t).
+         */
+        void undo_rollback(int t) {
+            // Perform update from time t as well (slide 3)
+            for (int i = t; i < ops.size(); i++) {
+                pair<Op,int> p = ops[i];
+
+                switch (p.first) {
+                    case INSERT:
+                        tree.insert(p.second, 0);
+                        break;
+                    case DELETE:
+                        tree.remove(p.second);
+                        break;
+                }
+            }
+        }
+
+        // NOTE: THIS IMPLEMENTATION DOES NOT WORK! SEE BELOW!
         RBTree<int> rollback(int t) {
             // Simple optimization to ensure a constant of O(m/2)
             // ratehr than O(m), when rolling back further than
@@ -69,6 +117,12 @@ class RollbackRBTree : public Retro {
             return rollbackward(t);
         }
 
+        // NOTE: THIS IMPLEMENTATION DOES NOT WORK!
+        // To do a rollback this way, we need a copy of the existing
+        // data structure, which requires proper copy construction.
+        // If copy construction takes time O(n log n), the running
+        // time of a rollback-based query still takes O(m log n),
+        // but with a significantly higher constant.
         RBTree<int> rollbackward(int t) {
             RBTree<int> result;
             for (int i = ops.size() - 1; i >= t; i--) {
