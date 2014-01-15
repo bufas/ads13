@@ -15,9 +15,9 @@ class RBTree {
 		// 	sentinel->red = false;
 		// }
 
-		RBTree<T>() : root(nullptr) {
-			sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true, nullptr);
-			sentinel->red = false;
+		RBTree<T>() : root(nullptr), sentinel(nullptr) {
+			// sentinel = new RBTreeNode<T>(nullptr, nullptr, nullptr, 0, true, nullptr);
+			// sentinel->red = false;
 		}
 
 		~RBTree<T>() {
@@ -25,7 +25,7 @@ class RBTree {
 			delete sentinel;
 		}
 
-		RBTreeNode<T>* insert(int key, T *value);
+		RBTreeNode<T>* insert(int key, T value);
 		bool remove(int key);
 		bool remove(RBTreeNode<T> *z);
 		int predecessor(int x);
@@ -46,3 +46,5 @@ class RBTree {
 		void rotate_right(RBTreeNode<T> *x);
 
 };
+
+#include "RBTreeImpl.h"

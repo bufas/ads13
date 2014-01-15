@@ -15,7 +15,7 @@ RBTreeNode<T>* RBTree<T>::get(int key) {
 }
 
 template<typename T>
-RBTreeNode<T>* RBTree<T>::insert(int key, T *value) {
+RBTreeNode<T>* RBTree<T>::insert(int key, T value) {
 	RBTreeNode<T> *y = sentinel;
 	RBTreeNode<T> *x = (root == nullptr) ? sentinel : root; // Special case when tree is empty
 
@@ -219,10 +219,10 @@ void RBTree<T>::print() {
 template<typename T>
 void RBTree<T>::insert_fixup(RBTreeNode<T> *z) {
 	RBTreeNode<T> *y;
-	while (z->p->red) {
+	while (z->p != sentinel && z->p->red) {
 		if (z->p == z->p->p->left) {
 			y = z->p->p->right;
-			if (y->red) {
+			if (y != sentinel && y->red) {
 				z->p->red = false;
 				y->red = false;
 				z->p->p->red = true;
@@ -239,7 +239,7 @@ void RBTree<T>::insert_fixup(RBTreeNode<T> *z) {
 		} else {
 			// Same as then case, with left and right swapped
 			y = z->p->p->left;
-			if(y->red) {
+			if (y != sentinel && y->red) {
 				z->p->red = false;
 				y->red = false;
 				z->p->p->red = true;
@@ -312,8 +312,8 @@ void RBTree<T>::transplant(RBTreeNode<T> *u, RBTreeNode<T> *v) {
 
 template<typename T>
 bool check4aux(RBTreeNode<T> *n) {
-	if (n->sentinel) return true;
-	if (n->red && (n->left->red || n->right->red)) return false;
+	if (n == nullptr || n->sentinel) return true;
+	if (n->red && ((n->left != nullptr && n->left->red) || (n->right != nullptr && n->right->red))) return false;
 	return check4aux(n->left) && check4aux(n->right);
 }
 
@@ -322,7 +322,7 @@ bool check4aux(RBTreeNode<T> *n) {
 // has a different number of black nodes
 template<typename T>
 int check5aux(RBTreeNode<T> *n) {
-	if (n->sentinel) return 1;
+	if (n == nullptr || n->sentinel) return 1;
 
 	int leftcount  = check5aux(n->left);
 	int rightcount = check5aux(n->right);
@@ -350,7 +350,7 @@ bool RBTree<T>::validate() {
 	}
 
 	// 3. Every leaf (NIL) is black
-	if (sentinel->red) {
+	if (sentinel != nullptr) {
 		cout << "Property 3 violated" << endl;
 		return false;
 	}

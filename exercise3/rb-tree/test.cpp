@@ -1,12 +1,12 @@
-#include "RBTree2.h"
+#include "RBTree.h"
 
 int main(int argc, char *argv[]) {
-    RBTree<bool> t = RBTree<bool>();
+    RBTree<int> t = RBTree<int>();
     int n = 5000;
     for (int i = 0; i < n; i++) {
         int key = n - i;
-        t.insert(key,false);
+        t.insert(key, i);
     }
-    //t.validate();
+    t.validate();
     return 0;
 }
