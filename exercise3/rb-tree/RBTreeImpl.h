@@ -200,9 +200,9 @@ void print_aux(RBTreeNode<T> *n, int indent) {
 		return;
 	}
 
-	int p = n->p->key;
-	int l = n->left->key;
-	int r = n->right->key;
+	int p = (n->p     != nullptr) ? n->p->key     : -1;
+	int l = (n->left  != nullptr) ? n->left->key  : -1;
+	int r = (n->right != nullptr) ? n->right->key : -1;
 	const char *color = (n->red) ? "RED" : "BLACK";
 
 	cout << setw(indent);
