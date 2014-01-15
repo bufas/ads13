@@ -35,7 +35,7 @@ class RollbackRBTree : public Retro {
                     tree.remove(key);
                     break;
             }
-            ops.push_back(make_pair(o, key));
+            ops.insert(ops.begin() + t, make_pair(o, key));
         }
 
         void Delete(int t) {
@@ -43,16 +43,12 @@ class RollbackRBTree : public Retro {
             switch (p.first) {
                 case INSERT:
                     tree.remove(p.second);
-                    ops.push_back(make_pair(DELETE, p.second));
                     break;
                 case DELETE:
                     tree.insert(p.second, 0);
-                    ops.push_back(make_pair(INSERT, p.second));
                     break;
             }
-            // Instead of adding a new pair when undoing, use this
-            // optimization to keep m low
-            // ops.erase(ops.begin() + t);
+            ops.erase(ops.begin() + t);
         }
 
         int Query(int key) {
