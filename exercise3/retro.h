@@ -1,7 +1,5 @@
 #pragma once
 
-#include "rb-tree/RBTree.h"
-
 enum Op { INSERT, DELETE };
 
 class Retro {
