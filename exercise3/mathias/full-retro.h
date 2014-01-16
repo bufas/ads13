@@ -74,9 +74,10 @@ public:
 		Leaf n = *timeline[t];
 		switch (n.o) {
 			case INSERT:
-				// Remove the node form now, and invalidate the leaf in history
+				// Remove the node from now, and invalidate the leaf in history
 				now.erase(n.x);
 				n.invalidate();
+				history.remove_interval_from(&n, n.x);
 				break;
 			case DELETE:
 				history.restore_interval_from(&n, n.x);

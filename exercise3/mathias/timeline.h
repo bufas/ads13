@@ -477,7 +477,13 @@ class Tree {
 		}
 
 		void restore_interval_from(Leaf *from, int key) {
-
+			// TODO this is just to measure the time and is totally wrong
+			insert_interval_to_end(from, key);
+		}
+		
+		void remove_interval_from(Leaf *from, int key) {
+			// TODO this is just to measure the time and is totally wrong
+			insert_interval_to_end(from, key);
 		}
 
 		void insert_interval_to_end(Leaf *from, int key) {
